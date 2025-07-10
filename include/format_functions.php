@@ -243,13 +243,32 @@ function phorum_date( $picture, $ts )
         $PHORUM['locale']="EN";
     setlocale(LC_TIME, $PHORUM['locale']);
 
+    // PHP 8.x deprecation fixes.
+    // Convert strftime format to date format
+    $convert_format = function($strftime_format) {
+        return str_replace([
+            '%B', '%d', '%Y', '%I', '%M', '%p'
+        ], [
+            'F', 'd', 'Y', 'h', 'i', 'A'
+        ], $strftime_format);
+    };
+
+
     // Format the date.
     if ($PHORUM["user_time_zone"] && isset($PHORUM["user"]["tz_offset"]) && $PHORUM["user"]["tz_offset"]!=-99) {
         $ts += $PHORUM["user"]["tz_offset"] * 3600;
-        return gmstrftime( $picture, $ts );
+        // return gmstrftime( $picture, $ts );
+
+        // PHP 8.x deprecation fixes.
+        // return gmstrftime( $picture, $ts );
+        return gmdate($convert_format($picture), $ts);
     } else {
         $ts += $PHORUM["tz_offset"] * 3600;
-        return strftime( $picture, $ts );
+        // return strftime( $picture, $ts );
+
+        // PHP 8.x deprecation fixes.
+        // return strftime( $picture, $ts );
+        return date($convert_format($picture), $ts);
     }
 }
 

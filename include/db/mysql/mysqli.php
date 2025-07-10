@@ -102,6 +102,10 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             exit;
         }
 
+        // Restore pre PHP 8.1 behavior so that
+        // we can handle the error codes in PHP.
+        mysqli_report(MYSQLI_REPORT_OFF);
+
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
             mysqli_query( $conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
         }
