@@ -247,9 +247,9 @@ function phorum_date( $picture, $ts )
     // Convert strftime format to date format
     $convert_format = function($strftime_format) {
         return str_replace([
-            '%B', '%d', '%Y', '%I', '%M', '%p'
+            '%B', '%d', '%Y', '%I', '%M', '%p', '%m',
         ], [
-            'F', 'd', 'Y', 'h', 'i', 'A'
+            'F', 'd', 'Y', 'h', 'i', 'A', 'm',
         ], $strftime_format);
     };
 
