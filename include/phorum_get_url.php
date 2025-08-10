@@ -291,7 +291,10 @@ function phorum_get_current_url($include_query_string=true) {
         } else {
             $host = $_SERVER['HTTP_HOST'];
         }
-        $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ? "https" : "http";
+        $protocol = (
+                (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"]!="off") ||
+                (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+        ) ? "https" : "http";
         $port = ($_SERVER["SERVER_PORT"]!=443 && $_SERVER["SERVER_PORT"]!=80) ? ':'.$_SERVER["SERVER_PORT"] : "";
         $url = $protocol.'://'.$host.$port.$_SERVER['PHP_SELF'];
     }

@@ -53,23 +53,23 @@ $frm->hidden("mod", "smtp_mail");
 $frm->addbreak("Settings for the SMTP Mail Module");
 
 
-$frm->addrow("Hostname of mailserver", $frm->text_box("host", $PHORUM['smtp_mail']['host'], 50));
-$frm->addrow("Port of mailserver", $frm->text_box("port", $PHORUM['smtp_mail']['port'], 5)." (Default Port is 25, unencrypted. Encrypted Port is usually 465)");
+$frm->addrow("Hostname of mailserver", $frm->text_box("host", $PHORUM['smtp_mail']['host'] ?? '', 50));
+$frm->addrow("Port of mailserver", $frm->text_box("port", $PHORUM['smtp_mail']['port'] ?? '', 5)." (Default Port is 25, unencrypted. Encrypted Port is usually 465)");
 
-$frm->addrow("Connection Type", $frm->select_tag("conn", array('plain'=>'Plain Connection','ssl'=>'SSL-Encryption','tls'=>'TLS-Encryption'), $PHORUM['smtp_mail']['conn'])." (e.g. Google-Mail connection needs TLS)");
+$frm->addrow("Connection Type", $frm->select_tag("conn", array('plain'=>'Plain Connection','ssl'=>'SSL-Encryption','tls'=>'TLS-Encryption'), $PHORUM['smtp_mail']['conn'] ?? '')." (e.g. Google-Mail connection needs TLS)");
 
 
-$frm->addrow("Use SMTP Auth", $frm->select_tag("auth",array(1=>'Yes',0=>'No'),$PHORUM['smtp_mail']['auth']));
+$frm->addrow("Use SMTP Auth", $frm->select_tag("auth",array(1=>'Yes',0=>'No'),$PHORUM['smtp_mail']['auth'] ?? ''));
 
-$frm->addrow("SMTP Auth Username", $frm->text_box("auth_username", $PHORUM['smtp_mail']['username'], 50));
-$frm->addrow("SMTP Auth Password", $frm->text_box("auth_password", $PHORUM['smtp_mail']['password'], 50,0,true));
+$frm->addrow("SMTP Auth Username", $frm->text_box("auth_username", $PHORUM['smtp_mail']['username'] ?? '', 50));
+$frm->addrow("SMTP Auth Password", $frm->text_box("auth_password", $PHORUM['smtp_mail']['password'] ?? '', 50,0,true));
 
 $frm->addsubbreak("Logging / Errorhandling");
 
-$row = $frm->addrow("Show errors on screen",$frm->select_tag("show_errors",array(1=>"Yes",0=>"No"),$PHORUM['smtp_mail']['show_errors']));
+$row = $frm->addrow("Show errors on screen",$frm->select_tag("show_errors",array(1=>"Yes",0=>"No"),$PHORUM['smtp_mail']['show_errors'] ?? 1));
 $frm->addhelp($row,"Show errors on screen","This option enables to show errors on screen (default). If disabled you should make sure that you have the Event Logging Module enabled which will log errors in email sending.");
 
-$row = $frm->addrow("Log successful mails to the Event Logging Module",$frm->select_tag("log_successful",array(0=>"No",1=>"Yes"),$PHORUM['smtp_mail']['log_successful']));
+$row = $frm->addrow("Log successful mails to the Event Logging Module",$frm->select_tag("log_successful",array(0=>"No",1=>"Yes"),$PHORUM['smtp_mail']['log_successful'] ?? 0));
 $frm->addhelp($row,"Logging of successful emails to the Event Logging Module","This option logs successful email messages to the Event Logging Module if that is enabled too.\nErrors are logged there always (if the module is enabled).");
 $frm->show();
 

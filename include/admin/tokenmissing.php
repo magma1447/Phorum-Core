@@ -85,7 +85,7 @@
     }
 
     $targetargs = $_SERVER['QUERY_STRING'];
-    $target_html = htmlspecialchars(phorum_admin_build_url($targetargs));
+    $target_html = phorum_admin_build_url($targetargs);
     $targs_html = htmlspecialchars($targetargs);
     $post_url = phorum_admin_build_url('base');
 ?>

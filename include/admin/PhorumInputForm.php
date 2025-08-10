@@ -38,10 +38,19 @@ class PhorumInputForm {
     var $_events;
     var $_submit;
     var $_help;
+    var $_module;
+
+    function __construct(...$args)
+    {
+        $this->PhorumInputForm(...$args);
+    }
 
     function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
-        $this->_action = ( empty( $action ) ) ? $_SERVER["PHP_SELF"] : $action;
+        $this->_action = ( empty( $action ) ) ?
+            (defined('PHORUM_ADMIN') ? $PHORUM["admin_http_path"] : $_SERVER["PHP_SELF"]) :
+            $action
+        ;
         $this->_method = $method;
         $this->_target = $target;
         $this->_enctype = $enctype;
@@ -178,7 +187,7 @@ class PhorumInputForm {
         // options below the break do not belong to the Phorum
         // admin core.
         $type = 'break';
-        if ($this->_module !== NULL &&
+        if (isset($this->_module) &&
             isset($_REQUEST["module"]) &&
             $_REQUEST["module"] != "modsettings") {
             $type = 'subbreak';
@@ -218,7 +227,7 @@ class PhorumInputForm {
             echo "\n//]]></script>\n";
         }
         echo "<form style=\"display: inline;\" " .
-             "action=\"".htmlspecialchars($this->_action)."\" " .
+             "action=\"".htmlspecialchars($this->_action ?? '')."\" " .
              "method=\"$this->_method\"";
         if ( !empty( $this->_target ) ) echo " target=\"$this->_target\"";
         if ( !empty( $this->_enctype ) ) echo " enctype=\"$this->_enctype\"";
@@ -366,7 +375,7 @@ class PhorumInputForm {
         $data = "<input type=\"$type\" name=\"$name\"";
         if ( $size > 0 ) $data .= " size=\"$size\"";
         if ( $maxlength > 0 ) $data .= " maxlength=\"$maxlength\"";
-        $value = htmlspecialchars( $value );
+        $value = htmlspecialchars( $value ?? '' );
         $data .= " value=\"$value\" $extra />";
 
         return $data;

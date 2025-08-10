@@ -41,6 +41,16 @@
     // determine absolute URI for the admin
     $PHORUM["admin_http_path"] = phorum_get_current_url(false);
 
+    // Use custom URL function if available (same as rest of Phorum)
+    if (function_exists("phorum_custom_get_url")) {
+        $parsed = parse_url($PHORUM["admin_http_path"]);
+        $path = isset($parsed['path']) ? $parsed['path'] : '';
+        $custom_url = phorum_custom_get_url("admin", [], '', '');
+        if ($custom_url) {
+            $PHORUM["admin_http_path"] = $custom_url;
+        }
+    }
+
     // determine http_path (at install time; after that it's in the settings)
     if(!isset($PHORUM["http_path"])){
         $PHORUM["http_path"] = dirname($_SERVER["PHP_SELF"]);
