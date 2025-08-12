@@ -36,6 +36,7 @@ function phorum_smtp_send_messages ($data)
         try {
 
             require_once("./mods/smtp_mail/phpmailer/class.phpmailer.php");
+            require_once("./mods/smtp_mail/phpmailer/class.smtp.php");
 
             $mail = new PHPMailer();
             $mail->PluginDir = "./mods/smtp_mail/phpmailer/";
