@@ -47,6 +47,8 @@ class PhorumInputForm {
 
     function PhorumInputForm ( $action = "", $method = "get", $submit = "Submit", $target = "", $enctype = "", $events = array() )
     {
+        global $PHORUM;
+
         $this->_action = ( empty( $action ) ) ?
             (defined('PHORUM_ADMIN') ? $PHORUM["admin_http_path"] : $_SERVER["PHP_SELF"]) :
             $action
@@ -219,7 +221,7 @@ class PhorumInputForm {
     {
         global $PHORUM;
 
-        if(count($this->_help)){
+        if($this->_help !== null && count($this->_help)){
             echo "<script type=\"text/javascript\">\n//<![CDATA[\nvar help = Array;\n";
             foreach($this->_help as $key=>$data){
                 echo "help[$key] = [\"$data[0]\", \"$data[1]\"];\n";
