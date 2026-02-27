@@ -100,6 +100,11 @@ if(!empty($cache)){
             $thread_start = $messages[$thread];
         }
 
+        if (empty($thread_start)) {
+            header("HTTP/1.1 404 Not Found");
+            exit();
+        }
+
         $feed_url = phorum_get_url(PHORUM_FOREIGN_READ_URL, $PHORUM["forum_id"], $thread, $thread);
         $feed_title = strip_tags($thread_start["subject"]);
         $feed_description = strip_tags($thread_start["body"]);
