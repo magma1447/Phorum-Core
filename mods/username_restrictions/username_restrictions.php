@@ -64,16 +64,16 @@ function phorum_mod_username_restrictions_before_register($data)
                 case 'n':
                   $strip .= '0-9';
                   break;
-                case 'd';
+                case 'd':
                   $strip .= '\.';
                   break;
-                case 'h';
+                case 'h':
                   $strip .= '\-';
                   break;
-                case 'u';
+                case 'u':
                   $strip .= '_';
                   break;
-                case 's';
+                case 's':
                   $strip .= ' ';
                   break;
             }

@@ -182,7 +182,7 @@ function phorum_mod_event_logging_error_handler($errno, $errstr, $file, $line)
     $type     = NULL;
     switch ($errno)
     {
-        case E_USER_NOTICE;
+        case E_USER_NOTICE:
         case E_NOTICE:
           if ($PHORUM["mod_event_logging"]["do_log_php_notice"]) {
             $loglevel = EVENTLOG_LVL_DEBUG;
