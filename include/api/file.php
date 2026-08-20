@@ -173,10 +173,9 @@ function phorum_api_file_check_write_access($file)
     $GLOBALS["PHORUM"]["API"]["errno"] = NULL;
     $GLOBALS["PHORUM"]["API"]["error"] = NULL;
 
-    if (!isset($file["link"])) trigger_error(
+    if (!isset($file["link"])) throw new PhorumError(
         "phorum_api_file_check_write_access(): \$file parameter needs a " .
-        "\"link\" field.",
-        E_USER_ERROR
+        "\"link\" field."
     );
 
     if (empty($file["user_id"])) {
@@ -358,9 +357,8 @@ function phorum_api_file_store($file)
     global $PHORUM;
 
     // Check if we really got an array argument for $file.
-    if (!is_array($file)) trigger_error(
-        "phorum_api_file_store(): \$file parameter must be an array.",
-        E_USER_ERROR
+    if (!is_array($file)) throw new PhorumError(
+        "phorum_api_file_store(): \$file parameter must be an array."
     );
 
     // Check and preprocess the data from the $file argument.
@@ -411,10 +409,9 @@ function phorum_api_file_store($file)
                 break;
 
             default:
-                trigger_error(
+                throw new PhorumError(
                     "phorum_api_file_store(): \$file parameter contains " .
-                    'an illegal field "'.htmlspecialchars($k).'".',
-                    E_USER_ERROR
+                    'an illegal field "'.htmlspecialchars($k).'".'
                 );
         }
     }
@@ -436,17 +433,15 @@ function phorum_api_file_store($file)
             break;
         case PHORUM_LINK_USER:
             $checkfile["message_id"] = 0;
-            if (empty($checkfile["user_id"])) trigger_error (
+            if (empty($checkfile["user_id"])) throw new PhorumError(
                 "phorum_api_file_store(): \$file set the link type to " .
-                "PHORUM_LINK_USER, but the user_id was not set.",
-                E_USER_ERROR
+                "PHORUM_LINK_USER, but the user_id was not set."
             );
             break;
         case PHORUM_LINK_MESSAGE:
-            if (empty($checkfile["message_id"])) trigger_error (
+            if (empty($checkfile["message_id"])) throw new PhorumError(
                 "phorum_api_file_store(): \$file set the link type to " .
-                "PHORUM_LINK_MESSAGE, but the message_id was not set.",
-                E_USER_ERROR
+                "PHORUM_LINK_MESSAGE, but the message_id was not set."
             );
             break;
         default:
@@ -459,10 +454,9 @@ function phorum_api_file_store($file)
     // See if all required values are set.
     foreach ($checkfile as $k => $v) {
         if ($k == 'file_id') continue; // is NULL for new files.
-        if ($v === NULL) trigger_error(
+        if ($v === NULL) throw new PhorumError(
             "phorum_api_file_store(): \$file parameter misses the " .
-            '"' . htmlspecialchars($k) . '" field.',
-            E_USER_ERROR
+            '"' . htmlspecialchars($k) . '" field.'
         );
     }
 
@@ -769,13 +763,11 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     }
 
     // A small basic check to see if we have a proper $file array.
-    if (!isset($file["file_id"])) trigger_error(
-        "phorum_api_file_get(): \$file parameter needs a \"file_id\" field.",
-        E_USER_ERROR
+    if (!isset($file["file_id"])) throw new PhorumError(
+        "phorum_api_file_get(): \$file parameter needs a \"file_id\" field."
     );
-    if (!isset($file["filename"])) trigger_error(
-        "phorum_api_file_get(): \$file parameter needs a \"filename\" field.",
-        E_USER_ERROR
+    if (!isset($file["filename"])) throw new PhorumError(
+        "phorum_api_file_get(): \$file parameter needs a \"filename\" field."
     );
     settype($file["file_id"], "int");
 
@@ -850,7 +842,6 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
            $finfo = @finfo_open(FILEINFO_MIME,$mime_magic_file)) {
 
             $file["mime_type"] = finfo_buffer($finfo,$file['file_data']);
-            finfo_close($finfo);
             if ($file["mime_type"] === FALSE) return phorum_api_error_set(
                 PHORUM_ERRNO_ERROR,
                 "The mime-type of file {$file["file_id"]} couldn't be determined through the" .
@@ -952,10 +943,9 @@ function phorum_api_file_retrieve($file, $flags = PHORUM_FLAG_GET)
     }
 
     // Safety net.
-    else trigger_error(
+    else throw new PhorumError(
         "phorum_api_file_retrieve(): no retrieve mode specified in the " .
-        "flags (either use PHORUM_FLAG_GET or PHORUM_FLAG_SEND).",
-        E_USER_ERROR
+        "flags (either use PHORUM_FLAG_GET or PHORUM_FLAG_SEND)."
     );
 }
 // }}}
@@ -1075,10 +1065,9 @@ function phorum_api_file_delete($file)
 
     // Find the file_id parameter to use.
     if (is_array($file)) {
-        if (!isset($file["file_id"])) trigger_error(
+        if (!isset($file["file_id"])) throw new PhorumError(
             "phorum_api_file_delete(): \$file parameter needs a " .
-            "\"file_id\" field.",
-            E_USER_ERROR
+            "\"file_id\" field."
         );
         $file_id = (int) $file["file_id"];
     } else {
@@ -1227,10 +1216,9 @@ function phorum_api_file_purge_stale($do_purge)
  */
 function phorum_api_file_safe_to_view($file)
 {
-    if (!isset($file['file_data'])) trigger_error(
+    if (!isset($file['file_data'])) throw new PhorumError(
         "phorum_api_file_safe_to_view(): \$file parameter needs a " .
-        "\"file_data\" field.",
-        E_USER_ERROR
+        "\"file_data\" field."
     );
 
     $safe_to_cache = TRUE;

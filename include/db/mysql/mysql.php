@@ -122,9 +122,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
     }
 
     // By now, we really need a SQL query.
-    if ($sql === NULL) trigger_error(
+    if ($sql === NULL) throw new PhorumError(
         'Internal error: phorum_db_interact(): ' .
-        'missing sql query statement!', E_USER_ERROR
+        'missing sql query statement!'
     );
 
     // Execute the SQL query.
@@ -316,9 +316,9 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         return mysql_insert_id($conn);
     }
 
-    trigger_error(
+    throw new PhorumError(
         'Internal error: phorum_db_interact(): ' .
-        'illegal return type specified!', E_USER_ERROR
+        'illegal return type specified!'
     );
 }
 
@@ -349,9 +349,9 @@ function phorum_db_fetch_row($res, $type)
         $row = mysql_fetch_assoc($res);
     } elseif ($type === DB_RETURN_ROW) {
         $row = mysql_fetch_row($res);
-    } else trigger_error(
+    } else throw new PhorumError(
         'Internal error: phorum_db_fetch_row(): ' .
-        'illegal \$type parameter used', E_USER_ERROR
+        'illegal \$type parameter used'
     );
 
     return $row ? $row : NULL;

@@ -119,18 +119,16 @@ function phorum_api_custom_profile_field_configure($field)
     // or an error if the field is mandatory.
     foreach ($fields as $f => $default) {
         if (!array_key_exists($f, $field)) {
-            if ($default === NULL) trigger_error(
+            if ($default === NULL) throw new PhorumError(
                 'phorum_api_custom_profile_field_configure(): Missing field ' .
-                "in \$field parameter: $f",
-                E_USER_ERROR
+                "in \$field parameter: $f"
             );
 
             $field[$f] = $default;
         }
-        elseif ($f != 'id' && $field[$f] === NULL) trigger_error(
+        elseif ($f != 'id' && $field[$f] === NULL) throw new PhorumError(
             'phorum_api_custom_profile_field_configure(): Field $f in ' .
-            "\$field parameter cannot be NULL",
-            E_USER_ERROR
+            "\$field parameter cannot be NULL"
         );
     }
 

@@ -161,10 +161,9 @@ function phorum_api_http_get($url, $method = NULL)
                 }
 
                 // Shouldn't get here.
-                trigger_error(
+                throw new PhorumError(
                     'phorum_api_http_get_nalyze() returned an ' .
-                    'unexpected result.',
-                    E_USER_ERROR
+                    'unexpected result.'
                 );
             }
         }
@@ -343,10 +342,9 @@ function phorum_api_http_get($url, $method = NULL)
             }
 
             // Shouldn't get here.
-            trigger_error(
+            throw new PhorumError(
                 'phorum_api_http_get_analyze() returned an ' .
-                'unexpected result.',
-                E_USER_ERROR
+                'unexpected result.'
             );
         }
     }

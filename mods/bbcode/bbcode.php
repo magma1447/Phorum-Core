@@ -278,9 +278,8 @@ function phorum_mod_bbcode_addon()
 {
     global $PHORUM;
 
-    if (empty($PHORUM["args"]["action"])) trigger_error(
-        'Missing "action" argument for bbcode module addon call',
-        E_USER_ERROR
+    if (empty($PHORUM["args"]["action"])) throw new PhorumError(
+        'Missing "action" argument for bbcode module addon call'
     );
 
     if ($PHORUM["args"]["action"] == 'help')
@@ -293,11 +292,10 @@ function phorum_mod_bbcode_addon()
         exit(0);
     }
 
-    trigger_error(
+    throw new PhorumError(
         'Illegal "action" argument ' .
         '"' . htmlspecialchars($PHORUM['args']['action']) . '"' .
-        'for bbcode module addon call',
-        E_USER_ERROR
+        'for bbcode module addon call'
     );
 }
 

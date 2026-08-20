@@ -100,10 +100,9 @@ function phorum_mod_spamhurdles_tpl_editor_before_textarea()
     // We do not need the checks for editing existing messages.
     if (isset($PHORUM["DATA"]["POSTING"]["message_id"])) {
         if (!empty($PHORUM["DATA"]["POSTING"]["message_id"])) return;
-    } else trigger_error(
+    } else throw new PhorumError(
         "phorum_mod_spamhurdles_tpl_editor_before_textarea(): " .
-        "Can't determine whether we're editing a new message",
-        E_USER_ERROR
+        "Can't determine whether we're editing a new message"
     );
 
     // Initialize the form, unless we have spamhurdles data in the
@@ -122,10 +121,9 @@ function phorum_mod_spamhurdles_tpl_editor_before_textarea()
     else
     {
         $data = spamhurdles_api_get_formdata('posting');
-        if ($data === NULL) trigger_error(
+        if ($data === NULL) throw new PhorumError(
             'No "spamhurdles_posting" data field was found in the POST ' .
-            'request. This should not happen.',
-            E_USER_ERROR
+            'request. This should not happen.'
         );
 
     }
@@ -238,10 +236,9 @@ function phorum_mod_spamhurdles_tpl_register_form()
     else
     {
         $data = spamhurdles_api_get_formdata('register');
-        if ($data === NULL) trigger_error(
+        if ($data === NULL) throw new PhorumError(
             'No "spamhurdles_register" data field was found in the POST ' .
-            'request. This should not happen.',
-            E_USER_ERROR
+            'request. This should not happen.'
         );
     }
 
@@ -309,10 +306,9 @@ function phorum_mod_spamhurdles_tpl_pm_editor_before_textarea()
     else
     {
         $data = spamhurdles_api_get_formdata('pm');
-        if ($data === NULL) trigger_error(
+        if ($data === NULL) throw new PhorumError(
             'No "spamhurdles_pm" data field was found in the POST request. ' .
-            'This should not happen.',
-            E_USER_ERROR
+            'This should not happen.'
         );
     }
 

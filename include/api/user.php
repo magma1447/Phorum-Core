@@ -403,25 +403,22 @@ function phorum_api_user_save($user, $flags = 0)
 
     // $user must be an array.
     if (!is_array($user)) {
-        trigger_error(
-            'phorum_api_user_save(): $user argument is not an array',
-            E_USER_ERROR
+        throw new PhorumError(
+            'phorum_api_user_save(): $user argument is not an array'
         );
         return NULL;
     }
 
     // We need at least the user_id field.
     if (!array_key_exists('user_id', $user)) {
-        trigger_error(
-            'phorum_api_user_save(): missing field "user_id" in user data array',
-            E_USER_ERROR
+        throw new PhorumError(
+            'phorum_api_user_save(): missing field "user_id" in user data array'
         );
         return NULL;
     }
     if ($user['user_id'] !== NULL && !is_numeric($user['user_id'])) {
-        trigger_error(
-            'phorum_api_user_save(): field "user_id" not NULL or numerical',
-            E_USER_ERROR
+        throw new PhorumError(
+            'phorum_api_user_save(): field "user_id" not NULL or numerical'
         );
         return NULL;
     }
@@ -508,10 +505,9 @@ function phorum_api_user_save($user, $flags = 0)
                 break;
 
             default:
-                trigger_error(
+                throw new PhorumError(
                     'phorum_api_user_save(): Illegal field type used: ' .
-                    htmlspecialchars($fldtype),
-                    E_USER_ERROR
+                    htmlspecialchars($fldtype)
                 );
                 return NULL;
                 break;
@@ -526,20 +522,18 @@ function phorum_api_user_save($user, $flags = 0)
     // enough to continue with.
     // We really need a username, so we can always generate a display name.
     if (!isset($dbuser['username']) || $dbuser['username'] == '') {
-        trigger_error(
+        throw new PhorumError(
             'phorum_api_user_save(): the username field for a user record ' .
-            'cannot be empty',
-            E_USER_ERROR
+            'cannot be empty'
         );
         return NULL;
     }
     // Phorum sends out mail messages on several occasions. So we need a
     // mail address for the user.
     if (!isset($dbuser['email']) || $dbuser['email'] == '') {
-        trigger_error(
+        throw new PhorumError(
             'phorum_api_user_save(): the email field for a user record ' .
-            'cannot be empty',
-            E_USER_ERROR
+            'cannot be empty'
         );
         return NULL;
     }
@@ -764,9 +758,8 @@ function phorum_api_user_save($user, $flags = 0)
 function phorum_api_user_save_raw($user)
 {
     if (empty($user['user_id'])) {
-        trigger_error(
-            'phorum_api_user_save_raw(): the user_id field cannot be empty',
-            E_USER_ERROR
+        throw new PhorumError(
+            'phorum_api_user_save_raw(): the user_id field cannot be empty'
         );
         return NULL;
     }
@@ -1253,7 +1246,7 @@ function phorum_api_user_search($field, $value, $operator = '=', $return_array =
  * and the keys in the arrays must be the same.
  *
  * @param mixed $field_id
- *     The custom profile field id (integer) or ids (array) to search on.
+ *     The custom profile field id (int) or ids (array) to search on.
  *
  * @param mixed $value
  *     The value (string) or values (array) to search for.
@@ -1640,12 +1633,11 @@ function phorum_api_user_authenticate($type, $username, $password)
         // Check if the returned user_id is numerical, if the the module
         // did return a user_id.
         if ($authinfo['user_id']!==NULL && !is_numeric($authinfo['user_id'])) {
-            trigger_error(
+            throw new PhorumError(
                 'Hook user_check_login returned a non-numerical user_id "' .
                 htmlspecialchars($authinfo['user_id']) .
                 '" for the authenticated user. Phorum only supports numerical ' .
-                'user_id values.',
-                E_USER_ERROR
+                'user_id values.'
             );
             return NULL;
         }
@@ -1774,10 +1766,9 @@ function phorum_api_user_set_active_user($type, $user = NULL, $flags = 0)
         }
         // Bogus $user parameter.
         else {
-            trigger_error(
+            throw new PhorumError(
                 'phorum_api_user_set_active_user(): $user argument should be ' .
-                'one of NULL, array or integer',
-                E_USER_ERROR
+                'one of NULL, array or integer'
             );
             return NULL;
         }
@@ -2045,10 +2036,9 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Check if we have a valid session type.
     if ($type != PHORUM_FORUM_SESSION &&
         $type != PHORUM_ADMIN_SESSION) {
-        trigger_error(
+        throw new PhorumError(
             'phorum_api_user_session_create(): Illegal session type: ' .
-            htmlspecialchars($type),
-            E_USER_ERROR
+            htmlspecialchars($type)
         );
         return NULL;
     }
@@ -2056,9 +2046,8 @@ function phorum_api_user_session_create($type, $reset = 0)
     // Check if the active Phorum user was set.
     if (empty($PHORUM['user']) ||
         empty($PHORUM['user']['user_id'])) {
-        trigger_error(
-            'phorum_api_user_session_create(): Missing user in environment',
-            E_USER_ERROR
+        throw new PhorumError(
+            'phorum_api_user_session_create(): Missing user in environment'
         );
         return NULL;
     }
@@ -2292,10 +2281,9 @@ function phorum_api_user_session_restore($type)
         $check_session[PHORUM_SESSION_ADMIN] = 1;
     }
     else {
-        trigger_error(
+        throw new PhorumError(
             'phorum_api_user_session_restore(): Illegal session type: ' .
-            htmlspecialchars($type),
-            E_USER_ERROR
+            htmlspecialchars($type)
         );
         return NULL;
     }
@@ -2690,10 +2678,9 @@ function phorum_api_user_session_destroy($type)
                 $PHORUM['session_path'], $PHORUM['session_domain']
             );
         } else {
-            trigger_error(
+            throw new PhorumError(
                 'phorum_api_user_session_destroy(): Illegal session type: ' .
-                htmlspecialchars($type),
-                E_USER_ERROR
+                htmlspecialchars($type)
             );
             return NULL;
         }
@@ -2780,10 +2767,9 @@ function phorum_api_user_save_groups($user_id, $groups)
             $perm != PHORUM_USER_GROUP_UNAPPROVED &&
             $perm != PHORUM_USER_GROUP_APPROVED   &&
             $perm != PHORUM_USER_GROUP_MODERATOR) {
-            trigger_error(
+            throw new PhorumError(
                 'phorum_api_user_save_groups(): Illegal group permission for ' .
-                'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm),
-                E_USER_ERROR
+                'group id '.htmlspecialchars($id).': '.htmlspecialchars($perm)
             );
             return NULL;
         }

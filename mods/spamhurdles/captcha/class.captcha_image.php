@@ -36,10 +36,9 @@ class captcha_image extends captcha_base
                 $fonts[] = "$fontsdir/$file";
             }
         }
-        if (count($fonts) == 0) trigger_error(
+        if (count($fonts) == 0) throw new PhorumError(
             'captcha_image class did not find any ttf fonts to use for ' .
-            'writing the captcha code',
-            E_USER_ERROR
+            'writing the captcha code'
         );
 
         // Create an image, that should be large enough for holding
@@ -109,12 +108,10 @@ class captcha_image extends captcha_base
         // Crop the code into a new image.
         $cropped = imagecreatetruecolor($boxwidth, $boxheight);
         imagecopy($cropped, $img, 0, 0, 0, 0, $boxwidth, $boxheight);
-        imagedestroy($img);
 
         // Display the image.
         header("Content-Type: image/gif");
         imagegif($cropped);
-        imagedestroy($cropped);
     }
 }
 ?>

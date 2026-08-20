@@ -154,9 +154,8 @@ function phorum_mod_smileys_addon()
 {
     global $PHORUM;
 
-    if (empty($PHORUM["args"]["action"])) trigger_error(
-        'Missing "action" argument for smileys module addon call',
-        E_USER_ERROR
+    if (empty($PHORUM["args"]["action"])) throw new PhorumError(
+        'Missing "action" argument for smileys module addon call'
     );
 
     // Include the smileys help page.
@@ -170,11 +169,10 @@ function phorum_mod_smileys_addon()
         exit(0);
     }
 
-    trigger_error(
+    throw new PhorumError(
         'Illegal "action" argument ' .
         '"' . htmlspecialchars($PHORUM['args']['action']) . '"' .
-        'for smileys module addon call',
-        E_USER_ERROR
+        'for smileys module addon call'
     );
 }
 

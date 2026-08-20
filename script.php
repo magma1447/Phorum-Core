@@ -104,13 +104,11 @@ if (count($modules))
     // find a registered external/scheduled hook for them.
     if (count($process)) {
         $mod = array_shift($process);
-        if (empty($PHORUM['mods'][$mod])) trigger_error(
-            "Requested module \"$mod\" does not exist or is not enabled.",
-            E_USER_ERROR
+        if (empty($PHORUM['mods'][$mod])) throw new PhorumError(
+            "Requested module \"$mod\" does not exist or is not enabled."
         );
-        trigger_error(
-            "Requested module \"$mod\" does not implement hook \"$callhook\".",
-            E_USER_ERROR
+        throw new PhorumError(
+            "Requested module \"$mod\" does not implement hook \"$callhook\"."
         );
     }
 }

@@ -53,7 +53,7 @@ $settings_file = "./mods/event_logging/settings/{$action}.php";
 if (file_exists($settings_file)) {
     include($settings_file);
 } else {
-    trigger_error("Illegal settings action requested.", E_USER_ERROR);
+    throw new PhorumError("Illegal settings action requested.");
 }
 
 ?>

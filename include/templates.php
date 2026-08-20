@@ -117,14 +117,13 @@ function phorum_import_template_pass1($infile, $include_depth = 0, $deps = array
 {
     $include_depth++;
 
-    if ($include_depth > PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH) trigger_error(
+    if ($include_depth > PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH) throw new PhorumError(
         "phorum_import_template_pass1: the include depth has passed " .
         "the maximum allowed include depth of " .
         PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH . ". Maybe some circular " .
         "include loop was introduced? If not, then you can raise the " .
         "value for the PHORUM_TEMPLATES_MAX_INCLUDE_DEPTH definition " .
-        "in " . htmlspecialchars(__FILE__) . ".",
-        E_USER_ERROR
+        "in " . htmlspecialchars(__FILE__) . "."
     );
 
     $deps[$infile] = filemtime($infile);
@@ -734,10 +733,9 @@ function phorum_templatevalue_to_php($loopvars, $value)
 function phorum_read_file($file)
 {
     // Check if the file exists.
-    if (! file_exists($file)) trigger_error(
+    if (! file_exists($file)) throw new PhorumError(
         "phorum_get_file_contents: file \"" . htmlspecialchars($file) . "\" " .
-        "does not exist",
-        E_USER_ERROR
+        "does not exist"
     );
 
     // In case we're handling a zero byte large file, we don't read it in.
@@ -746,10 +744,9 @@ function phorum_read_file($file)
     if ($size == 0) return "";
 
     // Read in the file contents.
-    if (! $fp = fopen($file, "r")) trigger_error(
+    if (! $fp = fopen($file, "r")) throw new PhorumError(
         "phorum_get_file_contents: failed to read file " .
-        "\"" . htmlspecialchars($file) . "\"",
-        E_USER_ERROR
+        "\"" . htmlspecialchars($file) . "\""
     );
     // Strip UTF-8 byte order markers from the files. These only mean
     // harm for PHP scripts.
@@ -779,29 +776,26 @@ function phorum_read_file($file)
 function phorum_write_file($file, $data)
 {
     // Write the data to the file.
-    if (! $fp = fopen($file, "w")) trigger_error(
+    if (! $fp = fopen($file, "w")) throw new PhorumError(
         "phorum_write_file: failed to write to file " .
         "\"" . htmlspecialchars($file) . "\". This is probably caused by " .
-        "the file permissions on your Phorum cache directory",
-        E_USER_ERROR
+        "the file permissions on your Phorum cache directory"
     );
     fputs($fp, $data);
-    if (! fclose($fp)) trigger_error(
+    if (! fclose($fp)) throw new PhorumError(
         "phorum_write_file: error on closing the file " .
-        "\"" . htmlspecialchars($file) . "\". Is your disk full?",
-        E_USER_ERROR
+        "\"" . htmlspecialchars($file) . "\". Is your disk full?"
     );
 
     // A special check on the created outputfile. We have seen strange
     // things happen on Windows2000 where the webserver could not read
     // the file it just had written :-/
-    if (! $fp = fopen($file, "r")) trigger_error(
+    if (! $fp = fopen($file, "r")) throw new PhorumError(
         "Failed to write a usable compiled template to the file " .
         "\"" . htmlspecialchars($file) . "\". The file was created " .
         "successfully, but it could not be read by the webserver " .
         "afterwards. This is probably caused by the filepermissions " .
-        "on your cache directory.",
-        E_USER_ERROR
+        "on your cache directory."
     );
     fclose($fp);
 }

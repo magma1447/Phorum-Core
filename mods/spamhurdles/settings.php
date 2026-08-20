@@ -17,8 +17,8 @@ $captchaspec = array(
 if (count($_POST))
 {
     $captcha_type = basename($_POST['captcha_type']);
-    if (!isset($captchaspec[$captcha_type])) trigger_error(
-        'Illegal CAPTCHA specified.', E_USER_ERROR
+    if (!isset($captchaspec[$captcha_type])) throw new PhorumError(
+        'Illegal CAPTCHA specified.'
     );
 
     if ($captcha_type === 'image' && !function_exists('imagecreatetruecolor'))

@@ -267,13 +267,13 @@ if ($initial) {
     }
 
 } else {
-    if (! isset($_POST["mode"])) trigger_error(
-        "Missing parameter \"mode\" in request", E_USER_ERROR
+    if (! isset($_POST["mode"])) throw new PhorumError(
+        "Missing parameter \"mode\" in request"
     );
     $mode = $_POST["mode"];
 }
-if (! in_array($mode, $valid_modes)) trigger_error(
-    "Illegal mode issued: " . htmlspecialchars($mode), E_USER_ERROR
+if (! in_array($mode, $valid_modes)) throw new PhorumError(
+    "Illegal mode issued: " . htmlspecialchars($mode)
 );
 
 // Find out if we are detaching an attachment.
@@ -599,9 +599,8 @@ if ( !$PHORUM["DATA"]["ERROR"] && $finish )
         include("./include/posting/action_edit.php");
     }
     // A little safety net.
-    else trigger_error(
-        "Internal error: finish action for \"$mode\" not available",
-        E_USER_ERROR
+    else throw new PhorumError(
+        "Internal error: finish action for \"$mode\" not available"
     );
 }
 
