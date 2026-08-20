@@ -58,6 +58,12 @@ $PHORUM = array
 // Load all constants from ./include/constants.php
 require_once( "./include/constants.php" );
 
+// Install the handler for uncaught exceptions. This has to happen before
+// the database layer and the API are loaded, since those throw PhorumError.
+require_once( "./phorum_error.php" );
+$PHORUM_ERROR_HANDLER = new PhorumErrorHandler();
+$PHORUM_ERROR_HANDLER->register();
+
 // Load the API code that is required for all pages.
 require_once("./include/api/base.php");
 require_once("./include/api/user.php");

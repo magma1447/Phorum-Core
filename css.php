@@ -27,14 +27,12 @@ define('PHORUM_COMPRESS_CSS', FALSE);
 if(!empty($PHORUM["args"]["1"])){
     $css = basename((string)$PHORUM["args"]["1"]);
 } else {
-    trigger_error("Missing argument", E_USER_ERROR);
-    exit(1);
+    throw new PhorumError("Missing argument");
 }
 
 // let it only process css templates
 if(substr($css,0,3) != 'css') {
-    trigger_error("Wrong template", E_USER_ERROR);
-    exit(1);
+    throw new PhorumError("Wrong template");
 }
 
 // So we can use {URL->HTTP_PATH} in the templates.
