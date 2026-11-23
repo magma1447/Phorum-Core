@@ -76,9 +76,21 @@ foreach ($PHORUM["post_fields"] as $var => $spec)
         case "array":
             // Serialized arrays are base64 encoded, to prevent special
             // character (especially newline) mangling by the browser.
-            $message[$var] = isset($_POST[$var])
-                           ? unserialize(base64_decode($_POST[$var]))
-                           : array();
+            // Only plain data is accepted: unserialize() can create objects
+            // of any class, and creating some of them runs code.
+            if (isset($_POST[$var])) {
+                $message[$var] = unserialize(
+                    base64_decode($_POST[$var]),
+                    array('allowed_classes' => FALSE)
+                );
+                if (!is_array($message[$var])) throw new PhorumError(
+                    "Data signing error: field " . htmlspecialchars($var) .
+                    " doesn't hold an array; there was probably tampering " .
+                    "with the form data"
+                );
+            } else {
+                $message[$var] = array();
+            }
             break;
 
         case "string":

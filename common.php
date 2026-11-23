@@ -2078,7 +2078,15 @@ function phorum_generate_data_signature($data)
 function phorum_check_data_signature($data, $signature)
 {
     global $PHORUM;
-    return md5($data . $PHORUM["private_key"]) == $signature;
+
+    // A posted field can be an array instead of a string.
+    if (!is_string($data) || !is_string($signature)) {
+        return FALSE;
+    }
+
+    // Not ==, which compares two numeric strings such as "0e1234" and
+    // "0" as numbers.
+    return hash_equals(md5($data . $PHORUM["private_key"]), $signature);
 }
 
 /**
