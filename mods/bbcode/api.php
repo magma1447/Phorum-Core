@@ -1201,7 +1201,9 @@ function bbcode_img_handler($content, $args, $message)
             $content = preg_replace('/[<">].*[<">]/', '', $content);
         $args['img'] = $content;
     }
-    if (!preg_match('!^\w+://!', $args['img'])) {
+    // Only web URLs. Any other scheme, javascript:// included, is taken
+    // as part of a URL without a scheme.
+    if (!preg_match('!^(https?|ftp)://!i', $args['img'])) {
         $args['img'] = 'http://'.$args['img'];
     }
 
@@ -1254,7 +1256,9 @@ function bbcode_url_handler($content, $args, $message)
         $args['url'] = $content;
         $strip_url = TRUE;
     }
-    if (!preg_match('!^\w+://!', $args['url'])) {
+    // Only web URLs. Any other scheme, javascript:// included, is taken
+    // as part of a URL without a scheme.
+    if (!preg_match('!^(https?|ftp)://!i', $args['url'])) {
         $args['url'] = 'http://'.$args['url'];
     }
     // we need the full url for nofollow handling
