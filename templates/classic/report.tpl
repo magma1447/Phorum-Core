@@ -13,6 +13,7 @@
   <div class="PhorumReadBodyText">{PostBody}</div><br />
   {LANG->ReportPostExplanation}<br />
   <form method="post" action="{ReportURL}">
+    {POST_VARS}
     <textarea name="explanation" rows="5" cols="60" wrap="virtual">{explanation}</textarea><br />
     <input type="submit" name="report" value="{LANG->Report}" />
   </form>

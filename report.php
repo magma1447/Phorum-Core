@@ -33,6 +33,9 @@ if(!phorum_check_read_common()) {
   return;
 }
 
+// Refuse a report form that wasn't posted from this page.
+phorum_check_posting_token();
+
 $report = false;
 $template = "report";
 
@@ -104,7 +107,7 @@ if(is_array($message) && count($message)) {
 
     // if the report was not successfully sent, keep whatever explanation they gave already
     if (isset($_POST["explanation"]) && !$report) {
-        $PHORUM["DATA"]["explanation"] = $_POST["explanation"];
+        $PHORUM["DATA"]["explanation"] = htmlspecialchars($_POST["explanation"], ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]);
     }
     else {
         $PHORUM["DATA"]["explanation"] = "";
