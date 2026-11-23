@@ -118,10 +118,10 @@ foreach($diffs as $diff_info){
 
     } elseif(!isset($diff_info['diff_body'])) {
 
-        $this_version['colored_body'] = nl2br($prev_body);
+        $this_version['colored_body'] = nl2br(htmlspecialchars($prev_body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]));
 
     } else {
-        $this_version["colored_body"] = nl2br($prev_body);
+        $this_version["colored_body"] = nl2br(htmlspecialchars($prev_body, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]));
     }
 
     //print "DEBUG<br />".$this_version["colored_body"]."<br />---<br />$prev_body<br />\n";
@@ -164,10 +164,10 @@ foreach($diffs as $diff_info){
 
     } elseif(!isset($diff_info['diff_subject'])) {
 
-        $this_version['colored_subject'] = nl2br($prev_subject);
+        $this_version['colored_subject'] = nl2br(htmlspecialchars($prev_subject, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]));
 
     } else {
-        $this_version["colored_subject"] = nl2br($prev_subject);
+        $this_version["colored_subject"] = nl2br(htmlspecialchars($prev_subject, ENT_COMPAT, $PHORUM["DATA"]["HCHARSET"]));
     }
 
     // no nl2br for subject
