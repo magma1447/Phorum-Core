@@ -478,7 +478,6 @@ function token_get_string(&$tokens, $string = NULL)
                 case T_ARRAY:
                 case T_LNUMBER:
                 case T_VARIABLE:
-                case T_CHARACTER:
                     $string .= $token[1];
                     break;
                 default:
