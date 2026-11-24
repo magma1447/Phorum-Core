@@ -22,6 +22,53 @@ include_once( "./common.php" );
 include_once( "./include/email_functions.php" );
 include_once( "./include/format_functions.php" );
 
+/**
+ * Whether the redirect after a login stays on an allowed URL: the same
+ * scheme, host and port, and a path under the allowed URL's path. Checking
+ * that the redirect starts with the allowed URL is not enough, since
+ * "http://localhost@evil.tld" starts with "http://localhost" and goes to
+ * evil.tld. An allowed URL without a host, such as "/phorum", allows only
+ * redirects without a host.
+ *
+ * @param string $redir
+ *     The URL to redirect to.
+ *
+ * @param string $allowed_url
+ *     The allowed URL.
+ *
+ * @return boolean
+ *     TRUE when the redirect stays on the allowed URL.
+ */
+function phorum_login_redirect_matches($redir, $allowed_url)
+{
+    $allowed_url = trim($allowed_url);
+    if ($allowed_url === '') return FALSE;
+
+    // Browsers read a backslash as a slash and drop tabs and newlines, which
+    // parse_url() does not, so "/\evil.tld" would go to evil.tld.
+    if (strpos($redir, '\\') !== FALSE || preg_match('/[[:cntrl:]]/', $redir)) return FALSE;
+
+    $target  = parse_url($redir);
+    $allowed = parse_url($allowed_url);
+    if ($target === FALSE || $allowed === FALSE ||
+        isset($target['user']) || isset($target['pass'])) {
+        return FALSE;
+    }
+
+    foreach (array('scheme', 'host') as $part) {
+        $target_part  = isset($target[$part])  ? strtolower($target[$part])  : NULL;
+        $allowed_part = isset($allowed[$part]) ? strtolower($allowed[$part]) : NULL;
+        if ($target_part !== $allowed_part) return FALSE;
+    }
+    $target_port  = isset($target['port'])  ? $target['port']  : NULL;
+    $allowed_port = isset($allowed['port']) ? $allowed['port'] : NULL;
+    if ($target_port !== $allowed_port) return FALSE;
+
+    $target_path  = isset($target['path'])  ? $target['path']  : '';
+    $allowed_path = isset($allowed['path']) ? $allowed['path'] : '';
+    return strpos($target_path, $allowed_path) === 0;
+}
+
 // ----------------------------------------------------------------------------
 // Handle logout
 // ----------------------------------------------------------------------------
@@ -414,8 +461,7 @@ if (count($_POST) > 0) {
                     $check_urls[]=$PHORUM['http_path'];
 
                     foreach($check_urls as $check_url) {
-                         // the redir-url has to start with one of these URLs
-                         if(stripos($redir,$check_url) === 0) {
+                         if(phorum_login_redirect_matches($redir, $check_url)) {
                                 $redir_ok = true;
                                 break;
                          }
