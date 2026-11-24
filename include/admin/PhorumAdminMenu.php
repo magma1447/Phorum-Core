@@ -25,7 +25,15 @@
         var $_id;
         var $_links;
 
-        function PhorumAdminMenu ($title="", $id="")
+        function __construct($title="", $id="")
+        {
+            $this->reset($title, $id);
+        }
+
+        // The constructor's old name, which PHP 8 no longer calls as a
+        // constructor; kept for code that calls it by name, such as
+        // parent::PhorumAdminMenu() in a subclass.
+        function PhorumAdminMenu($title="", $id="")
         {
             $this->reset($title, $id);
         }
