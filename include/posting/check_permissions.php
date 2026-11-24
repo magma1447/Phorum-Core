@@ -187,6 +187,8 @@ if ($mode == "edit")
 
     if (!$useredit && !$moderatoredit) {
         $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["EditPostForbidden"];
+        // Show only the error: the posting form would show the message.
+        $PHORUM["posting_template"] = "message";
         return;
     }
 }
