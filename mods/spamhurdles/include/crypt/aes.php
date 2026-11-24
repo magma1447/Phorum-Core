@@ -118,16 +118,27 @@ class Crypt_AES extends Crypt_Rijndael {
     var $mcrypt = array('', '');
 
     /**
+     * The constructor's old name, which PHP 8 no longer calls as a
+     * constructor; kept for code that calls it by name.
+     *
+     * @param optional Integer $mode
+     * @access public
+     */
+    function Crypt_AES($mode = CRYPT_AES_MODE_CBC)
+    {
+        $this->__construct($mode);
+    }
+
+    /**
      * Default Constructor.
      *
      * Determines whether or not the mcrypt extension should be used.  $mode should only, at present, be
      * CRYPT_AES_MODE_ECB or CRYPT_AES_MODE_CBC.  If not explictly set, CRYPT_AES_MODE_CBC will be used.
      *
      * @param optional Integer $mode
-     * @return Crypt_AES
      * @access public
      */
-    function Crypt_AES($mode = CRYPT_AES_MODE_CBC)
+    function __construct($mode = CRYPT_AES_MODE_CBC)
     {
         if ( !defined('CRYPT_AES_MODE') ) {
             switch (true) {
@@ -166,7 +177,7 @@ class Crypt_AES extends Crypt_Rijndael {
         }
 
         if (CRYPT_AES_MODE == CRYPT_AES_MODE_INTERNAL) {
-            parent::Crypt_Rijndael($this->mode);
+            parent::__construct($this->mode);
         }
     }
 

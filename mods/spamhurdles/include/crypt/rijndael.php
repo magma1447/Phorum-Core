@@ -349,16 +349,27 @@ class Crypt_Rijndael {
     var $dt3;
 
     /**
+     * The constructor's old name, which PHP 8 no longer calls as a
+     * constructor; kept for code that calls it by name.
+     *
+     * @param optional Integer $mode
+     * @access public
+     */
+    function Crypt_Rijndael($mode = CRYPT_RIJNDAEL_MODE_CBC)
+    {
+        $this->__construct($mode);
+    }
+
+    /**
      * Default Constructor.
      *
      * Determines whether or not the mcrypt extension should be used.  $mode should only, at present, be
      * CRYPT_RIJNDAEL_MODE_ECB or CRYPT_RIJNDAEL_MODE_CBC.  If not explictly set, CRYPT_RIJNDAEL_MODE_CBC will be used.
      *
      * @param optional Integer $mode
-     * @return Crypt_Rijndael
      * @access public
      */
-    function Crypt_Rijndael($mode = CRYPT_MODE_RIJNDAEL_CBC)
+    function __construct($mode = CRYPT_RIJNDAEL_MODE_CBC)
     {
         switch ($mode) {
             case CRYPT_RIJNDAEL_MODE_ECB:

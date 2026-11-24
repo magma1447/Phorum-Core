@@ -1,7 +1,16 @@
 <?php
 class banner
 {
+    var $font;
+
+    // The constructor's old name, which PHP 8 no longer calls as a
+    // constructor; kept for code that calls it by name.
     function banner($font = "banner.fnt")
+    {
+        $this->__construct($font);
+    }
+
+    function __construct($font = "banner.fnt")
     {
         $font = basename($font);
 
