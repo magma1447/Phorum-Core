@@ -102,6 +102,46 @@ phorum_build_common_urls();
 // make it possible to override this var in a hook
 $is_admin_user=$PHORUM["user"]["admin"];
 
+// These steps act as soon as they run, so they run only on a form post,
+// whose posting token is checked above. A plain link to one of them, which
+// a message or another site can make the moderator's browser load, shows
+// a confirmation form instead.
+$confirmed_steps = array(
+    PHORUM_CLOSE_THREAD         => 'CloseThread',
+    PHORUM_REOPEN_THREAD        => 'ReopenThread',
+    PHORUM_APPROVE_MESSAGE      => 'ApproveMessage',
+    PHORUM_APPROVE_MESSAGE_TREE => 'ApproveMessageReplies',
+    PHORUM_HIDE_POST            => 'HideMessage',
+);
+// The named arguments these steps read, carried through the form.
+$confirmed_args = array('prepost', 'old_forum', 'moddays', 'onlyunapproved');
+
+if (isset($confirmed_steps[$mod_step])) {
+    if (empty($_POST)) {
+        $args = array(
+            'mod_step' => $mod_step,
+            'thread'   => $msgthd_id,
+        );
+        foreach ($confirmed_args as $name) {
+            if (isset($PHORUM['args'][$name])) {
+                $args[$name] = $PHORUM['args'][$name];
+            }
+        }
+
+        return phorum_show_confirmation_form(
+            $PHORUM['DATA']['LANG'][$confirmed_steps[$mod_step]],
+            phorum_get_url(PHORUM_MODERATION_ACTION_URL),
+            $args
+        );
+    }
+
+    foreach ($confirmed_args as $name) {
+        if (isset($_POST[$name])) {
+            $PHORUM['args'][$name] = $_POST[$name];
+        }
+    }
+}
+
 /*
  * [hook]
  *     moderation
