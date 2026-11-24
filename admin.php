@@ -56,7 +56,7 @@
         $PHORUM["http_path"] = dirname($_SERVER["PHP_SELF"]);
     }
 
-    // if we are installing or upgrading, we don't need to check for a session
+    // if we are installing, we don't need to check for a session
     // 2005081000 was the internal version that introduced the installed flag
     if(!isset($PHORUM['internal_version']) || (!isset($PHORUM['installed']) && $PHORUM['internal_version']>='2005081000')) {
 
@@ -68,8 +68,17 @@
                !isset($PHORUM['internal_patchlevel']) ||
                $PHORUM['internal_patchlevel'] < PHORUM_SCHEMA_PATCHLEVEL ) {
 
-        // this is an upgrade
-        $module="upgrade";
+        // this is an upgrade, which runs the database upgrades, so it is for
+        // an administrator only. An administrator who can't log in until the
+        // upgrade has run can upgrade from the command line instead, with
+        // scripts/console_upgrade.php.
+        phorum_api_user_session_restore(PHORUM_ADMIN_SESSION);
+        if(!isset($GLOBALS["PHORUM"]["user"]) || !$GLOBALS["PHORUM"]["user"]["admin"]){
+            unset($GLOBALS["PHORUM"]["user"]);
+            $module="login";
+        } else {
+            $module="upgrade";
+        }
 
     } else {
 
