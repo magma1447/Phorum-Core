@@ -250,6 +250,7 @@
         "LostPassEmailBody1"    =>      "Someone (hopefully you) has requested a new password for your account at $PHORUM[title].  If it was not you, you can ignore this email and continue using your old password.\n\nIf it was you, here is your new login for the forums.",
         "LostPassEmailBody2"    =>      "You can login to $PHORUM[title] at ".phorum_get_url(PHORUM_LOGIN_URL)."\n\nThanks, $PHORUM[title]",
         "LostPassSent"          =>      "A new password has been sent to the email address you provided.",
+        "LostPassAnswered"      =>      "If the address belongs to an account, an email with what to do next has been sent to it.",
 
         "MakeSticky"            =>      "Make Sticky",
         "MarkForumRead"         =>      "Mark Forum Read",

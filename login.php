@@ -154,8 +154,6 @@ if (count($_POST) > 0) {
 
             // User registration not yet approved by a moderator.
             if($user["active"] == PHORUM_USER_PENDING_MOD) {
-                $template = "message";
-                $okmsg = $PHORUM["DATA"]["LANG"]["RegVerifyMod"];
 
                 $hook_args = array(
                     'status' => 'unapproved',
@@ -181,9 +179,6 @@ if (count($_POST) > 0) {
                    "\n\n$verify_url\n\n".
                    phorum_wordwrap($PHORUM["DATA"]["LANG"]["VerifyRegEmailBody2"],72);
                 phorum_email_user(array($user["email"]), $maildata);
-
-                $okmsg = $PHORUM["DATA"]["LANG"]["RegVerifyEmail"];
-                $template="message";
 
                 $hook_args = array(
                     'status' => 'new_verification',
@@ -215,8 +210,6 @@ if (count($_POST) > 0) {
                 $maildata['mailsubject'] = $PHORUM["DATA"]["LANG"]["LostPassEmailSubject"];
                 phorum_email_user(array( 0 => $user['email'] ), $maildata);
 
-                $okmsg = $PHORUM["DATA"]["LANG"]["LostPassSent"];
-
                 $hook_args = array(
                     'status' => 'new_password',
                     'email'  => $_POST['lostpass'],
@@ -228,14 +221,18 @@ if (count($_POST) > 0) {
 
         // The entered email address was not found.
         else {
-            $error = $PHORUM["DATA"]["LANG"]["LostPassError"];
-
             $hook_args = array(
                 'status' => 'user_unknown',
                 'email'  => $_POST['lostpass'],
                 'user'   => NULL,
                 'secret' => NULL
             );
+        }
+
+        // Every address gets the same answer, so that the form doesn't tell
+        // whether an address belongs to an account, or in what state it is.
+        if ($hook_args !== NULL) {
+            $okmsg = $PHORUM["DATA"]["LANG"]["LostPassAnswered"];
         }
 
         /*
