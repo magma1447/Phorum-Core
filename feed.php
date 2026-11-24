@@ -34,6 +34,12 @@ if(!empty($PHORUM["folder_flag"]) && $PHORUM["forum_id"] != $PHORUM["vroot"]){
     exit();
 }
 
+// Any other site can load the JavaScript feed with a script tag and read
+// it, so it only holds what a visitor may read.
+if (isset($PHORUM["args"]["type"]) && $PHORUM["args"]["type"] == "js") {
+    phorum_api_user_set_active_user(PHORUM_FORUM_SESSION, NULL);
+}
+
 // Get the forums that this user can read.
 // Check all forums below the current (v)root.
 if ($PHORUM["forum_id"]==$PHORUM["vroot"]){
