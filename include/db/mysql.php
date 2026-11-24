@@ -252,6 +252,32 @@ function phorum_db_sanitize_mixed(&$var, $type)
 }
 // }}}
 
+// {{{ Function: phorum_db_page_start()
+/**
+ * The offset of a page's first row, for a LIMIT clause.
+ *
+ * A page number from a URL can be so large that the offset doesn't fit in
+ * an integer; PHP then makes it a float, which breaks the SQL. Such a page
+ * gets the largest integer instead, so that the query finds no rows, as
+ * for any page past the last one.
+ *
+ * @param integer $page
+ *     The page, counted from 0.
+ *
+ * @param integer $length
+ *     The number of rows on a page.
+ *
+ * @return integer
+ *     The offset of the page's first row.
+ */
+function phorum_db_page_start($page, $length)
+{
+    $start = $page * $length;
+
+    return is_int($start) ? $start : PHP_INT_MAX;
+}
+// }}}
+
 // {{{ Function: phorum_db_validate_field()
 /**
  * Check if a value that will be used as a field name in a SQL query
@@ -537,7 +563,7 @@ function phorum_db_get_thread_list($page, $include_bodies=FALSE)
                 } else {
                     $limit = $PHORUM['list_length_flat'];
                 }
-                $start = $page * $limit;
+                $start = phorum_db_page_start($page, $limit);
 
                 $sql = "SELECT $messagefields
                         FROM   {$PHORUM['message_table']}
@@ -1411,7 +1437,7 @@ function phorum_db_get_messages($thread, $page=0, $ignore_mod_perms=FALSE, $writ
 
     if ($page > 0) {
        // Handle the page offset.
-       $start = $PHORUM['read_length'] * ($page-1);
+       $start = phorum_db_page_start($page-1, $PHORUM['read_length']);
        $sql .= " LIMIT $start,".$PHORUM['read_length'];
     } else {
        // Handle reverse threading. This is only done if $page is 0.
@@ -1605,7 +1631,7 @@ function phorum_db_search($search, $author, $return_threads, $offset, $length, $
     settype($days, 'int');
 
     // For spreading search results over multiple pages.
-    $start = $offset * $length;
+    $start = phorum_db_page_start($offset, $length);
 
     // Initialize the return data.
     $return = array('count' => 0, 'rows' => array());
