@@ -3875,6 +3875,8 @@ function phorum_db_user_save($userdata)
 
         // Add new forum permissions.
         foreach ($forum_perms as $forum_id => $permission) {
+            $forum_id   = (int)$forum_id;
+            $permission = (int)$permission;
             phorum_db_interact(
                 DB_RETURN_RES,
                 "INSERT INTO {$PHORUM['user_permissions_table']}

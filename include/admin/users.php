@@ -646,7 +646,7 @@ if (    !isset($_GET['edit'])
     }
 
     if (!empty($_REQUEST["forum_permissions"]) && !empty($_REQUEST["forum_permissions_forums"])) {
-        $forum_permissions = explode(",",$_REQUEST["forum_permissions"]);
+        $forum_permissions = array_map('intval', explode(",",$_REQUEST["forum_permissions"]));
         $or_forum_permissions = "";
         foreach ($forum_permissions as $forum_permission) {
             if (isset($forum_permissions_first)) {
@@ -657,7 +657,7 @@ if (    !isset($_GET['edit'])
             $or_forum_permissions .= "(perm.permission>=$forum_permission AND
                       (perm.permission & $forum_permission>0))";
         }
-        phorum_db_sanitize_mixed($_REQUEST["forum_permissions_forums"],"string");
+        $_REQUEST["forum_permissions_forums"] = implode(",", array_map('intval', explode(",", $_REQUEST["forum_permissions_forums"])));
         $db_forum_permissions_users = phorum_db_interact(
             DB_RETURN_ROWS,
             "SELECT DISTINCT user.user_id AS user_id
