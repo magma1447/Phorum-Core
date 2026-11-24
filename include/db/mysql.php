@@ -5391,7 +5391,7 @@ function phorum_db_user_list_subscriptions($user_id, $days=0, $forum_ids=NULL)
 
     settype($user_id, 'int');
     settype($days, 'int');
-    if ($forum_ids !== NULL) phorum_db_sanitize_mixed($forums_ids, 'int');
+    if ($forum_ids !== NULL) phorum_db_sanitize_mixed($forum_ids, 'int');
 
     $time_where = $days > 0
                 ? " AND (".time()." - m.modifystamp) <= ($days * 86400)"
