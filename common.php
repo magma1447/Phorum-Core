@@ -1866,7 +1866,7 @@ function phorum_build_common_urls()
 
     // these urls depend on the login-status of a user
     if ( $GLOBALS["PHORUM"]["DATA"]["LOGGEDIN"] ) {
-        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL, "logout=1" );
+        $GLOBALS["PHORUM"]["DATA"]["URL"]["LOGINOUT"] = phorum_get_url( PHORUM_LOGIN_URL, "logout=1", "token=" . phorum_posting_token('logout') );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["REGISTERPROFILE"] = phorum_get_url( PHORUM_CONTROLCENTER_URL );
         $GLOBALS["PHORUM"]["DATA"]["URL"]["PM"] = phorum_get_url( PHORUM_PM_URL );
     } else {

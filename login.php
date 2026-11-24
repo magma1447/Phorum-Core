@@ -26,7 +26,11 @@ include_once( "./include/format_functions.php" );
 // Handle logout
 // ----------------------------------------------------------------------------
 
-if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"])) {
+// The logout link carries the user's token: without it, any page could make
+// the browser load the link.
+if ($PHORUM['DATA']['LOGGEDIN'] && !empty($PHORUM["args"]["logout"]) &&
+    isset($PHORUM["args"]["token"]) && is_string($PHORUM["args"]["token"]) &&
+    hash_equals(phorum_posting_token('logout'), $PHORUM["args"]["token"])) {
 
     /*
      * [hook]
