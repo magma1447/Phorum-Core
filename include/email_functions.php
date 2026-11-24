@@ -42,12 +42,12 @@ function phorum_valid_email($email){
                 $ret = true;
             }
 
-            // some hosts don't have an MX record, but accept mail themselves
+            // some hosts don't have an MX record, but accept mail themselves,
+            // which then goes to the domain's own address. Only check that
+            // the domain has one: connecting to it would let anyone who
+            // enters an address make the server contact any host.
             if(!$ret){
-                // default timeout of 60 seconds makes the user way too long
-                // in case of problems.
-                ini_set('default_socket_timeout', 10);
-                if(@fsockopen($fulldomain, 25)){
+                if(checkdnsrr($fulldomain, "A") || checkdnsrr($fulldomain, "AAAA")){
                     $ret = true;
                 }
             }
