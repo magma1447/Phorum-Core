@@ -56,6 +56,15 @@ if(empty($msgthd_id) || !$PHORUM["DATA"]["MODERATOR"]) {
    phorum_return_to_list();
 }
 
+// The moderator rights were checked for the forum in the request, while the
+// steps act on the message or thread id alone. So that id has to be in that
+// forum; otherwise a moderator of one forum could moderate any other.
+$moderated_message = phorum_db_get_message($msgthd_id, 'message_id', TRUE);
+if (empty($moderated_message) ||
+    (int)$moderated_message['forum_id'] !== (int)$PHORUM['forum_id']) {
+    phorum_return_to_list();
+}
+
 // If the user is not fully logged in, send him to the login page.
 // because moderation action can vary so much, the only safe bet is to send them
 // to the referrer if they are not fully logged in
