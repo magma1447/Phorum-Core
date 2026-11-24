@@ -117,7 +117,9 @@ function phorum_feed_make_atom($messages, $forums, $feed_url, $feed_title, $feed
         $body = strtr($message['body'], "\001\002\003\004\005\006\007\010\013\014\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037", "????????????????????????????");
 
         $buffer.= "    <entry>\n";
-        $buffer.= "        <title type=\"html\">$title</title>\n";
+        // The subject is escaped as text, so the title has Atom's default
+        // type, text, and isn't read as HTML.
+        $buffer.= "        <title>$title</title>\n";
         $buffer.= "        <link href=\"".htmlspecialchars($url, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\" />\n";
         $buffer.= "        <category term=\"".htmlspecialchars($category, ENT_QUOTES, $PHORUM['DATA']['HCHARSET'])."\" />\n";
         $buffer.= "        <published>".date("c", $message["datestamp"])."</published>\n";
