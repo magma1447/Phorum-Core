@@ -168,8 +168,12 @@ function hide_help()
 } ?>
     <td class="statusbar_edge" align="center" valign="middle">
 <?php
+    // Refreshing the module info saves the modules' hooks, an admin action,
+    // so it isn't done on the pages for someone not confirmed as admin yet.
     require_once('./include/api/modules.php');
-    $updates = phorum_api_modules_check_updated_info();
+    $updates = ($module != "login" && $module != "tokenmissing")
+             ? phorum_api_modules_check_updated_info()
+             : array();
     if (!empty($updates)) {
         phorum_api_modules_save();
         print "<div style=\"padding:5px;background-color:#fffff0;".
