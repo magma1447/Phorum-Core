@@ -19,6 +19,15 @@
 
 if(!defined("PHORUM")) return;
 
+// An inactive forum takes no new messages or replies, whatever its
+// permissions say; only administrators can still post there.
+if (($mode == "post" || $mode == "reply") &&
+    empty($PHORUM["active"]) && empty($PHORUM["user"]["admin"])) {
+    $PHORUM["DATA"]["ERROR"] = $PHORUM["DATA"]["LANG"]["NoPost"];
+    $PHORUM["posting_template"] = "message";
+    return;
+}
+
 // Check if the user is allowed to post a new message or a reply.
 if( ($mode == "post" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_NEW_TOPIC)) ||
     ($mode == "reply" && !phorum_api_user_check_access(PHORUM_USER_ALLOW_REPLY)) ) {
