@@ -55,14 +55,36 @@ $message=phorum_db_get_message($thread);
 # spam filtering programs. We'll still handle the remove parameter
 # though, to keep supporting the URLs that are in the messages
 # that were sent out before this change.
-if(isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"])){
+$stop = isset($PHORUM["args"]["remove"]) || isset($PHORUM["args"]["stop"]) ||
+        isset($_POST["stop"]);
+$noemail = isset($PHORUM["args"]["noemail"]) || isset($_POST["noemail"]);
+
+// Stopping or muting a subscription acts only on a form post, whose posting
+// token is checked above. The links in the notification emails, which any
+// other page could make the browser load as well, show a Yes/No form first.
+if (($stop || $noemail) && empty($_POST)) {
+    include_once("./include/moderation_functions.php");
+    phorum_build_common_urls();
+    return phorum_show_confirmation_form(
+        $PHORUM["DATA"]["LANG"][$stop ? "ConfirmStopFollowing" : "ConfirmNoMoreEmails"],
+        phorum_get_url(PHORUM_FOLLOW_ACTION_URL),
+        array("thread" => $thread, ($stop ? "stop" : "noemail") => 1)
+    );
+}
+if (($stop || $noemail) && isset($_POST["confirmation"]) &&
+    $_POST["confirmation"] == $PHORUM["DATA"]["LANG"]["No"]) {
+    phorum_redirect_by_url(phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread));
+    exit();
+}
+
+if($stop){
     // we are removing a message from the follow list
     phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
     $PHORUM["DATA"]["OKMSG"]=$PHORUM["DATA"]["LANG"]["RemoveFollowed"];
     $PHORUM["DATA"]["URL"]["REDIRECT"]=phorum_get_url(PHORUM_FOREIGN_READ_URL, $message["forum_id"], $thread);
     $PHORUM["DATA"]["BACKMSG"]=$PHORUM["DATA"]["LANG"]["BackToThread"];
     $template="message";
-} elseif(isset($PHORUM["args"]["noemail"])){
+} elseif($noemail){
     // we are stopping emails for this thread
     phorum_api_user_unsubscribe( $PHORUM['user']['user_id'], $thread );
     phorum_api_user_subscribe( $PHORUM['user']['user_id'], $thread, $message["forum_id"], PHORUM_SUBSCRIPTION_BOOKMARK );

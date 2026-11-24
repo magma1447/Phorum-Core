@@ -122,7 +122,9 @@
         "CloseThread"           =>      "Close Topic",
         "ConfirmDeleteMessage"  =>      "Are you sure you want to delete this message?",
         "ConfirmDeleteThread"   =>      "Are you sure you want to delete this topic?",
+        "ConfirmNoMoreEmails"   =>      "Stop the emails about this topic?",
         "ConfirmReportMessage"  =>      "Are you sure you want to report this post?",
+        "ConfirmStopFollowing"  =>      "Stop following this topic?",
         "CurrentPage"           =>      "Current Page",
 
         "Date"                  =>      "Date",
