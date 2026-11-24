@@ -18,13 +18,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 define('phorum_page','version_iframe');
 
-// Check for new versions of the Phorum software. Only do this once by
-// issuing a cookie which remembers whether we need to upgrade or not.
-// This file is included within an <iframe> in the admin interface header,
-// so downtime of the phorum.org website won't affect the performance of
-// the admin interface for Phorum users.
+// Check for new versions of the Phorum software, for the <iframe> in the
+// admin interface header. A cookie remembers the answer, so that the latest
+// version isn't fetched from GitHub again on every admin page.
 
 require_once('./common.php');
+
+// Only an administrator may run the check.
+phorum_api_user_session_restore(PHORUM_ADMIN_SESSION);
+if (empty($PHORUM["user"]["admin"])) {
+    exit();
+}
 
 if (isset($_COOKIE["phorum_upgrade_available"])) {
     $upgrade_available = $_COOKIE["phorum_upgrade_available"];

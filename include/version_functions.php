@@ -161,41 +161,37 @@ function phorum_compare_version($version1, $version2)
     else               return +1;
 }
 
+// The branch that this Phorum is maintained on: the version in its
+// common.php is the latest release, and the branch is where to get it.
+// phorum.org's version list (http://phorum.org/version.php) is gone.
+define('PHORUM_RELEASE_COMMON_URL', 'https://raw.githubusercontent.com/magma1447/Phorum-Core/refs/heads/phorum_5_2_23-php85/common.php');
+define('PHORUM_RELEASE_DOWNLOAD_URL', 'https://github.com/magma1447/Phorum-Core/tree/phorum_5_2_23-php85');
+
 /**
- * Retrieves the available software versions from the Phorum website.
- * The format of the data returned from the server is two lines. The first
- * line is for the stable version and the second for the development version.
- * Each line contains pipe separated values, with the following fields in it:
- * <version>|<release date>|<downloadloc 1>|<downloadloc 2>|...|<downloadloc n>
+ * Retrieves the latest software version, from the PHORUM constant in the
+ * common.php of the branch that Phorum is maintained on.
  *
  * @return releases - An array of releases for release types
- *                    "stable" and "development".
+ *                    "stable" and "development"; empty if the version
+ *                    could not be retrieved.
  */
 function phorum_available_releases()
 {
+    require_once('./include/api/http_get.php');
+
     $releases = array();
-    $fp = @fopen("http://phorum.org/version.php", "r");
-    if ($fp) {
-        foreach (array("stable", "development") as $release) {
-            $line = fgets($fp, 1024);
-            if (strstr($line, '|')) {
-                $fields = explode('|', $line);
-                if (count($fields) >= 3) {
-                    // See if we can parse the version and if the parsed
-                    // release type matches the release type we're expecting.
-                    $parsed_version = phorum_parse_version($fields[0]);
-                    if ($parsed_version[0] == $release) {
-                        $releases[$release] = array(
-                            "version"   => array_shift($fields),
-                            "pversion"  => $parsed_version,
-                            "date"      => array_shift($fields),
-                            "locations" => $fields
-                        );
-                    }
-                }
-            }
+    $common = phorum_api_http_get(PHORUM_RELEASE_COMMON_URL);
+    if ($common !== NULL && $common !== FALSE &&
+        preg_match('/define\(\s*"PHORUM"\s*,\s*"([^"]+)"\s*\)/', $common, $m)) {
+        $parsed_version = phorum_parse_version($m[1]);
+        if ($parsed_version[0] == 'stable' || $parsed_version[0] == 'development') {
+            $releases[$parsed_version[0]] = array(
+                "version"   => $m[1],
+                "pversion"  => $parsed_version,
+                "date"      => "",
+                "locations" => array(PHORUM_RELEASE_DOWNLOAD_URL)
+            );
         }
-        fclose($fp);
     }
 
     return $releases;
