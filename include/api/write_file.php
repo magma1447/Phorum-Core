@@ -54,7 +54,6 @@ function phorum_api_write_file($file, $data)
     // Reset error storage.
     $GLOBALS['PHORUM']['API']['errno'] = NULL;
     $GLOBALS['PHORUM']['API']['error'] = NULL;
-    ini_set('track_errors', 1);
 
     // Generate the swap file name.
     $stamp   = preg_replace('/\D/', '', microtime());
@@ -63,10 +62,11 @@ function phorum_api_write_file($file, $data)
     // Open the swap file.
     $fp = @fopen($swpfile, 'w');
     if (!$fp) {
+        $php_error = phorum_last_php_error();
         @unlink($swpfile);
         return phorum_api_error_set(
             PHORUM_ERRNO_ERROR,
-            "Cannot create swap file \"$swpfile\": $php_errormsg"
+            "Cannot create swap file \"$swpfile\": $php_error"
         );
     }
 
@@ -98,10 +98,11 @@ function phorum_api_write_file($file, $data)
 
     // Move the swap file to its final location.
     if (!@rename($swpfile, $file)) {
+        $php_error = phorum_last_php_error();
         @unlink($swpfile);
         return phorum_api_error_set(
             PHORUM_ERRNO_ERROR,
-            "Cannot move swap file \"$swpfile\": $php_errormsg"
+            "Cannot move swap file \"$swpfile\": $php_error"
         );
     }
 

@@ -74,9 +74,6 @@ $PHORUM["SANITY_CHECKS"] = array(
     )
 );
 
-// Make using $php_errormsg possible for the checks.
-ini_set('track_errors', 1);
-
 // Run all available sanity checks.
 foreach ($sanity_checks as $check)
 {

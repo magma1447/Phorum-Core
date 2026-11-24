@@ -2157,6 +2157,20 @@ function phorum_check_posting_token($target_page = NULL)
 }
 
 /**
+ * The message of the last PHP error, warning or notice, also when it was
+ * silenced with @. It takes the place of $php_errormsg, which PHP 8 no
+ * longer sets.
+ *
+ * @return $message - The message, or an empty string if there was none.
+ */
+function phorum_last_php_error()
+{
+    $error = error_get_last();
+
+    return $error !== NULL ? $error['message'] : '';
+}
+
+/**
  * Generate a debug back trace.
  *
  * @param $skip       - The amount of back trace levels to skip. The call

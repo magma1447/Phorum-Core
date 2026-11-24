@@ -364,14 +364,12 @@ function phorum_api_http_get($url, $method = NULL)
     {
         $method = NULL;
 
-        $track = ini_get('track_errors');
-        ini_set('track_errors', TRUE);
-        $php_errormsg = '';
+        error_clear_last();
         $contents = @file_get_contents($url);
-        ini_set('track_errors', $track);
+        $php_error = phorum_last_php_error();
 
-        if ($contents === FALSE || $php_errormsg != '') {
-            $error = preg_replace('/(^.*?\:\s+|[\r\n])/', '', $php_errormsg);
+        if ($contents === FALSE || $php_error != '') {
+            $error = preg_replace('/(^.*?\:\s+|[\r\n])/', '', $php_error);
             $error = "[$error]";
         } else {
             return $contents;
