@@ -3701,7 +3701,7 @@ function phorum_db_user_search($field, $value, $operator='=', $return_array=FALS
             $ret = $user_ids;
         } else {
             // Return a single user_id.
-            list ($user_id, $dummy) = each($user_ids);
+            $user_id = array_key_first($user_ids);
 
             $ret = $user_id;
         }
@@ -6972,8 +6972,7 @@ function phorum_db_user_search_custom_profile_field($field_id, $value, $operator
     }
 
     // Return a single user_id.
-    list ($user_id, $dummy) = each($user_ids);
-    return $user_id;
+    return array_key_first($user_ids);
 }
 // }}}
 
