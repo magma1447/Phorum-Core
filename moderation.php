@@ -490,6 +490,15 @@ switch ($mod_step) {
 
         $movetoid=(int)$_POST['moveto'];
 
+        // Only a forum that the move form offers: an active forum the
+        // moderator can read, other than this one, and not a folder.
+        include_once './include/forum_functions.php';
+        $forums = phorum_build_forum_list();
+        if (!isset($forums[$movetoid]) || $forums[$movetoid]['folder_flag'] ||
+            $movetoid === (int)$PHORUM['forum_id']) {
+            $movetoid = 0;
+        }
+
         // only do something if a forum was selected
         if(empty($movetoid)) {
             $PHORUM['DATA']['MESSAGE']=$PHORUM["DATA"]['LANG']['MsgMoveSelectForum'];
@@ -930,7 +939,12 @@ switch ($mod_step) {
 
     case PHORUM_DO_THREAD_MERGE: // this is the last step of a thread merge
 
-        if( isset($_POST['thread1']) && $_POST['thread1']) {
+        // Only into the target thread that the moderator picked in the first
+        // step, where their rights for its forum were checked, and never into
+        // the thread itself: merging a thread into itself deletes it.
+        $merge_t1 = (int)phorum_moderator_data_get('merge_t1');
+        if( isset($_POST['thread1']) && $_POST['thread1'] &&
+            (int)$_POST['thread1'] === $merge_t1 && $merge_t1 !== $msgthd_id) {
             // Commit Thread Merge
             settype($_POST['thread1'], "int");
             settype($_POST['thread'], "int"); // Thread 2
