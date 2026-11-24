@@ -237,7 +237,7 @@ $frm->addhelp($row, "After search action", "On large forums or slow servers, sea
 
 $row=$frm->addrow( "How to strip a quote on the posting form", $frm->select_tag( "strip_quote_posting_form", array( 0=>"Strip HTML and BBCode <tags>", 1=>"Strip HTML <tags>" ), $PHORUM["strip_quote_posting_form"] ) );
 
-$row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging", array( "screen"=>"Errors will be shown on the screen", "file"=>"Errors will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Errors will be emailed to the system email address"), $PHORUM["error_logging"] ) );
+$row=$frm->addrow( "Database error handling", $frm->select_tag( "error_logging", array( "php"=>"Errors will be handled by PHP (shown or logged as PHP is configured)", "screen"=>"Errors will be shown on the screen", "file"=>"Errors will go to a logfile (".$PHORUM['cache']."/phorum-sql-errors.log)", "mail"=> "Errors will be emailed to the system email address"), $PHORUM["error_logging"] ) );
 
 $row=$frm->addrow( "Secret private key for signing data", $frm->text_box("private_key", $PHORUM["private_key"], 50) );
 $frm->addhelp($row, "Secret key for signing data", "On several occasions, data is transferred from the Phorum system to the user's system and back again. To be sure that there was no tampering with this data on the way, it is signed by Phorum using this secret key. If you do not understand what this is for, then it is safe to simply keep the pre-configured value.<br /><br /><b>Warning:</b> if you change this key, users who are active right now might experience problems.");

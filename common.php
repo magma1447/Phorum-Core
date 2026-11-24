@@ -2286,10 +2286,11 @@ function phorum_database_error($error)
         phorum_hook("database_error", $error);
     }
 
-    // Find out what type of error handling is required.
+    // Find out what type of error handling is required. Without a setting,
+    // PHP decides, so that the error isn't shown where PHP shows no errors.
     $logopt = isset($PHORUM["error_logging"])
             ? $PHORUM["error_logging"]
-            : 'screen';
+            : 'php';
 
     // Create a backtrace report, so it's easier to find out where a problem
     // is coming from.
@@ -2313,6 +2314,16 @@ function phorum_database_error($error)
 
     switch ($logopt)
     {
+        // Hand the database error to PHP, as a warning. PHP shows or logs it
+        // as it is configured to (display_errors, error_log), and passes it
+        // to any error handler the application has installed.
+        case "php":
+
+            trigger_error("Phorum database error: $error", E_USER_WARNING);
+
+            print "Please try again later!";
+            break;
+
         // Log the database error to a logfile.
         case "file":
 
