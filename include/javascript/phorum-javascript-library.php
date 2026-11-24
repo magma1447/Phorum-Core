@@ -22,7 +22,13 @@
  * Phorum is embedded in another application that uses a javascript library
  * or when a module is loaded that also loads a library of its own).
  *
+ * Both $ and jQuery go back to the page's own library. On a page without a
+ * jQuery of its own, jQuery stays Phorum's, as modules may use it.
+ *
  * @var jQuery
  */
-var $PJ = jQuery.noConflict();
+var $PJ = jQuery.noConflict(true);
+if (typeof window.jQuery === 'undefined') {
+    window.jQuery = $PJ;
+}
 

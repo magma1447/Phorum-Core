@@ -42,22 +42,8 @@ $module_registrations[] = array(
 // Add the jQuery JavaScript library code.
 $module_registrations[] = array(
     'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery-1.4.4.min.js)',
-    'cache_key' => '1.4.4.min'
-);
-
-// Add the jQuery JSON plugin.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery.json-1.3.min.js)',
-    'cache_key' => '1.3.min'
-);
-
-// Add the jQuery bgiframe plugin.
-$module_registrations[] = array(
-    'module'    => 'core',
-    'source'    => 'file(include/javascript/jquery.bgiframe-2.1.2.min.js)',
-    'cache_key' => '2.1.2.min'
+    'source'    => 'file(include/javascript/jquery-4.1.0.min.js)',
+    'cache_key' => '4.1.0.min'
 );
 
 // Add the Phorum JavaScript library.
