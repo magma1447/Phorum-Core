@@ -28,20 +28,35 @@ class PhorumError extends Exception
 class PhorumErrorHandler
 {
     /**
+     * The exception handler that was installed before this one, if any:
+     * the one of the application that Phorum runs inside.
+     */
+    private $previous = null;
+
+    /**
      * Install this handler as the exception handler for the request.
      */
     public function register()
     {
-        set_exception_handler(array($this, "handle"));
+        $this->previous = set_exception_handler(array($this, "handle"));
     }
 
     /**
      * Log the exception and end the request.
      *
+     * When Phorum runs inside an application that installed an exception
+     * handler of its own, that handler gets the exception instead, so that
+     * the application reports it the way it reports its own.
+     *
      * @param $exception - The uncaught exception.
      */
     public function handle($exception)
     {
+        if ($this->previous !== null) {
+            call_user_func($this->previous, $exception);
+            return;
+        }
+
         $internal = $exception instanceof PhorumError;
         $prefix   = $internal ? "Phorum error" : "Uncaught " . get_class($exception);
         $message  = $prefix . ": " . $exception->getMessage() .
