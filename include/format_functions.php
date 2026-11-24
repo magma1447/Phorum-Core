@@ -110,14 +110,21 @@ function phorum_format_messages ($data, $author_specs = NULL)
             // Escape special HTML characters.
             $escaped_body = htmlspecialchars($body, ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]);
 
+            // htmlspecialchars() gives an empty string for text that isn't
+            // valid in the charset. Whatever the fallback, the text is escaped.
             if($escaped_body == ""){
 
                 if(function_exists("iconv")){
                     // we are gonna guess and see if we get lucky
-                    $escaped_body = iconv("ISO-8859-1", $PHORUM["DATA"]["HCHARSET"], $body);
+                    $escaped_body = htmlspecialchars(
+                        iconv("ISO-8859-1", $PHORUM["DATA"]["HCHARSET"], $body),
+                        ENT_QUOTES, $PHORUM["DATA"]["HCHARSET"]
+                    );
                 } else {
-                    // we let htmlspecialchars use its defaults
-                    $escaped_body = htmlspecialchars($body);
+                    // invalid bytes become the replacement character
+                    $escaped_body = htmlspecialchars(
+                        $body, ENT_QUOTES | ENT_SUBSTITUTE, $PHORUM["DATA"]["HCHARSET"]
+                    );
                 }
 
             }
