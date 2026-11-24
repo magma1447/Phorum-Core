@@ -33,6 +33,15 @@ if(!phorum_check_read_common()) {
   return;
 }
 
+// A message is reported in its forum. phorum_check_read_common() checks no
+// read permission for a folder or forum 0, and without a forum the message
+// lookup below isn't limited to one.
+if ($PHORUM["folder_flag"] || empty($PHORUM["forum_id"])) {
+    $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    phorum_redirect_by_url($dest_url);
+    exit();
+}
+
 // Refuse a report form that wasn't posted from this page.
 phorum_check_posting_token();
 
@@ -44,6 +53,13 @@ $message=array();
 if (isset($PHORUM["args"][1]) && is_numeric($PHORUM["args"][1])) {
     $message_id = $PHORUM["args"][1];
     $message = phorum_db_get_message($message_id);
+
+    // A hidden message, or one waiting for approval, is for the forum's
+    // moderators only; to anyone else it doesn't exist.
+    if (is_array($message) && $message["status"] != PHORUM_STATUS_APPROVED &&
+        !phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES)) {
+        $message = array();
+    }
 }
 
 if(is_array($message) && count($message)) {
