@@ -8,10 +8,10 @@ ARGUMENTS
 
     [user_id]
 
-        The user_id of the user to check for. If this user_id is
-        not provided, the user_id of the logged in user will be
-        used instead. If no user is logged in, the call will
-        return zero by default.
+        The user_id of the user to check for, which has to be the
+        logged in user's own. If this user_id is not provided, the
+        user_id of the logged in user will be used instead. If no
+        user is logged in, the call will return zero by default.
 
 EXAMPLE JSON REQUESTS
 
@@ -29,7 +29,7 @@ RETURN VALUE
 ERRORS
 
     The call will return an error if the user_id is not in the
-    right format.
+    right format, or if it isn't the logged in user's own.
 
 AUTHOR
 
@@ -40,9 +40,14 @@ AUTHOR
 if (! defined('PHORUM')) return;
 
 $user_id = phorum_ajax_getarg('user_id', 'int>0', 0);
-if ($user_id == 0 && isset($PHORUM["user"]["user_id"])) {
-    $user_id = $PHORUM["user"]["user_id"];
+$own_id  = empty($PHORUM["user"]["user_id"]) ? 0 : (int)$PHORUM["user"]["user_id"];
+
+// Only the logged in user's own messages can be checked. For any other
+// user, the answer would tell when they have read the messages sent to them.
+if ($user_id != 0 && $user_id != $own_id) {
+    phorum_ajax_error('checkpm only checks the logged in user\'s own messages');
 }
+$user_id = $own_id;
 
 $hasnew = $user_id == 0
         ? 0
