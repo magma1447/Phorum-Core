@@ -96,6 +96,15 @@ if(!empty($cache)){
         // could happen with long threads
         if(!isset($messages[$thread])) {
             $thread_start = phorum_db_get_message($thread);
+
+            // Unlike the messages above, this lookup checks neither the read
+            // permission nor the status. A topic whose first message isn't
+            // approved doesn't exist for the feed, as it doesn't for read.php.
+            if (!empty($thread_start) &&
+                ($thread_start["status"] != PHORUM_STATUS_APPROVED ||
+                 !phorum_api_user_check_access(PHORUM_USER_ALLOW_READ))) {
+                $thread_start = NULL;
+            }
         } else {
             $thread_start = $messages[$thread];
         }
