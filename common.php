@@ -2090,6 +2090,35 @@ function phorum_check_data_signature($data, $signature)
 }
 
 /**
+ * The anti-CSRF token of the active user for a target page. It is tied to
+ * the user's login, or for a visitor who isn't logged in, to the browser.
+ *
+ * @param string $target_page
+ *     The page that the token is for.
+ *
+ * @return string
+ *     The token.
+ */
+function phorum_posting_token($target_page)
+{
+    global $PHORUM;
+
+    return md5(
+        $target_page . '/' .
+        (
+          $PHORUM['user']['user_id']
+          ? $PHORUM['user']['password'].'/'.$PHORUM['user']['sessid_lt']
+          : (
+              isset($_SERVER['HTTP_USER_AGENT'])
+              ? $_SERVER['HTTP_USER_AGENT']
+              : 'unknown'
+            )
+        ) . '/' .
+        $PHORUM['private_key']
+    );
+}
+
+/**
  * Setup and check posting tokens for form POST requests.
  *
  * For protecting forms against CSRF attacks, a signed posting token
@@ -2119,20 +2148,7 @@ function phorum_check_posting_token($target_page = NULL)
 
     if ($target_page === NULL) $target_page = phorum_page;
 
-    // Generate the posting token.
-    $posting_token = md5(
-        ($target_page !== NULL ? $target_page : phorum_page) . '/' .
-        (
-          $PHORUM['user']['user_id']
-          ? $PHORUM['user']['password'].'/'.$PHORUM['user']['sessid_lt']
-          : (
-              isset($_SERVER['HTTP_USER_AGENT'])
-              ? $_SERVER['HTTP_USER_AGENT']
-              : 'unknown'
-            )
-        ) . '/' .
-        $PHORUM['private_key']
-    );
+    $posting_token = phorum_posting_token($target_page);
 
     // Add the posting token to the {POST_VARS}.
     $PHORUM['DATA']['POST_VARS'] .=

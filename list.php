@@ -47,8 +47,11 @@ if($PHORUM["folder_flag"]){
 
 $newflagkey = $PHORUM["forum_id"]."-".$PHORUM['user']['user_id'];
 
-// check for markread
-if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"]){
+// check for markread, which needs the user's token: without it, any page could
+// make the browser load the link
+if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"] &&
+    isset($PHORUM["args"]["token"]) && is_string($PHORUM["args"]["token"]) &&
+    hash_equals(phorum_posting_token('markread'), $PHORUM["args"]["token"])){
     // setting all posts read
     unset($PHORUM['user']['newinfo']);
     phorum_db_newflag_allread();
@@ -550,7 +553,7 @@ $rows = phorum_format_messages($rows, array($recent_author_spec));
 $PHORUM["DATA"]["MESSAGES"] = $rows;
 
 if ($PHORUM["DATA"]["LOGGEDIN"]) {
-    $PHORUM["DATA"]["URL"]["MARK_READ"] = phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "markread");
+    $PHORUM["DATA"]["URL"]["MARK_READ"] = phorum_get_url(PHORUM_LIST_URL, $PHORUM["forum_id"], "markread", "token=" . phorum_posting_token('markread'));
 }
 if($PHORUM["DATA"]["MODERATOR"]) {
    $PHORUM["DATA"]["URL"]["UNAPPROVED"] = phorum_get_url(PHORUM_CONTROLCENTER_URL, "panel=messages");

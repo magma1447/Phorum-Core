@@ -26,8 +26,11 @@ if(!phorum_check_read_common()) {
   return;
 }
 
-// check for markread
-if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"]){
+// check for markread, which needs the user's token: without it, any page could
+// make the browser load the link
+if (!empty($PHORUM["args"][1]) && $PHORUM["args"][1] == 'markread' && $PHORUM["DATA"]["LOGGEDIN"] &&
+    isset($PHORUM["args"]["token"]) && is_string($PHORUM["args"]["token"]) &&
+    hash_equals(phorum_posting_token('markread'), $PHORUM["args"]["token"])){
     // setting all posts read
     if(isset($PHORUM["forum_id"])){
         unset($PHORUM['user']['newinfo']);
