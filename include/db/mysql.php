@@ -3367,9 +3367,12 @@ function phorum_db_user_get($user_id, $detailed = FALSE, $write_server = FALSE, 
 
         // Other fields can either contain raw values or serialized
         // arrays. For serialized arrays, the field data is prefixed with
-        // a magic "P_SER:" (Phorum serialized) marker.
+        // a magic "P_SER:" (Phorum serialized) marker. A raw value can start
+        // with the marker too, as the user typed it, so no objects.
         if (substr($fld['data'],0,6) == 'P_SER:') {
-            $users[$fld['user_id']][$name]=unserialize(substr($fld['data'],6));
+            $users[$fld['user_id']][$name]=unserialize(
+                substr($fld['data'],6), array('allowed_classes' => false)
+            );
             continue;
         }
 
