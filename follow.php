@@ -27,6 +27,9 @@ if(!phorum_check_read_common()) {
   return;
 }
 
+// Refuse a follow form that wasn't posted from this page.
+phorum_check_posting_token();
+
 // somehow we got to a folder
 if($PHORUM["folder_flag"] || empty($PHORUM["forum_id"])){
     $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
