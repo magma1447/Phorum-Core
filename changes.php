@@ -55,6 +55,14 @@ if(empty($message)){
 
 $PHORUM["DATA"]["MODERATOR"] = phorum_api_user_check_access(PHORUM_USER_ALLOW_MODERATE_MESSAGES);
 
+// A hidden message, or one waiting for approval, is for the forum's
+// moderators only; to anyone else it doesn't exist.
+if ($message["status"] != PHORUM_STATUS_APPROVED && !$PHORUM["DATA"]["MODERATOR"]) {
+    $dest_url = phorum_get_url(PHORUM_INDEX_URL, $PHORUM["forum_id"]);
+    phorum_redirect_by_url($dest_url);
+    exit();
+}
+
 $edit_tracks = phorum_db_get_message_edits($message_id);
 
 if(count($edit_tracks)==0 ||
