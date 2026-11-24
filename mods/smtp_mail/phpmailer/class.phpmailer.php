@@ -2349,7 +2349,12 @@ class PHPMailer
             if (!is_readable($path)) {
                 throw new phpmailerException($this->lang('file_open') . $path, self::STOP_CONTINUE);
             }
-            $magic_quotes = get_magic_quotes_runtime();
+            //get_magic_quotes_runtime() is deprecated in PHP 7.4 and gone in PHP 8,
+            //where magic quotes are always off
+            $magic_quotes = false;
+            if (version_compare(PHP_VERSION, '7.4.0', '<')) {
+                $magic_quotes = get_magic_quotes_runtime();
+            }
             if ($magic_quotes) {
                 if (version_compare(PHP_VERSION, '5.3.0', '<')) {
                     set_magic_quotes_runtime(false);
