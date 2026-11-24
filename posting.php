@@ -351,6 +351,12 @@ if ($message["message_id"]) {
     $mode = "reply";
 }
 
+// A new topic starts a thread of its own. The form's thread field isn't
+// signed, and only replies and edits replace it with the stored value.
+if ($mode == "post") {
+    $message["thread"] = 0;
+}
+
 // Do ban list checks. Only check the bans on entering and
 // on finishing up. No checking is needed on intermediate requests.
 if ($initial || $finish || $preview) {
