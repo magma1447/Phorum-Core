@@ -21,10 +21,7 @@
     if(!defined("PHORUM_ADMIN")) exit();
 
     if(count($_POST)) {
-        if(!empty($_POST['phorum_admin_token']) &&
-            $_POST['phorum_admin_token'] == $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] &&
-            time()-PHORUM_ADMIN_TOKEN_TIMEOUT < $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time']
-           ) {
+        if (phorum_admin_token_is_valid($_POST['phorum_admin_token'] ?? null)) {
 
                if(!empty($_POST['cancel'])) {
 

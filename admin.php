@@ -101,9 +101,7 @@
                 $module = "default";
             }
             // check the admin token
-            if(!empty($GLOBALS["PHORUM"]["user"]['settings_data']['admin_token']) &&
-               $PHORUM['admin_token'] != $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'] ||
-               $GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'] <= (time()-PHORUM_ADMIN_TOKEN_TIMEOUT)) {
+            if (!phorum_admin_token_is_valid($PHORUM['admin_token'])) {
                 // 900 = timeout after 15 minutes of inactivity
                // echo "invalid token or timeout ...";
                // var_dump($PHORUM['admin_token'],$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token'],$GLOBALS["PHORUM"]["user"]['settings_data']['admin_token_time'],(time()-PHORUM_ADMIN_TOKEN_TIMEOUT));

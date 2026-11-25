@@ -28,6 +28,27 @@ function phorum_admin_okmsg($error)
 {
     echo "<div class=\"PhorumAdminOkMsg\">$error</div>\n";
 }
+
+/**
+ * Tells whether $token is the active user's admin token, and has not timed out.
+ */
+function phorum_admin_token_is_valid($token)
+{
+    global $PHORUM;
+
+    $settings = $PHORUM['user']['settings_data'] ?? array();
+    $stored   = $settings['admin_token'] ?? '';
+
+    // The token page's Cancel button empties the stored token, which then lets no token in.
+    if (!is_string($token) || !is_string($stored) || $stored === '') {
+        return false;
+    }
+
+    // hash_equals() compares the strings as they are; != compares two numeric strings as
+    // numbers, so that "0e" followed by digits equals "0".
+    return hash_equals($stored, $token) &&
+           ($settings['admin_token_time'] ?? 0) > time() - PHORUM_ADMIN_TOKEN_TIMEOUT;
+}
 // phorum_get_language_info and phorum_get_template_info moved to common.php (used in the cc too)
 
 function phorum_get_folder_info()
