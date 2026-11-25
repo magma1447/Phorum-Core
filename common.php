@@ -87,7 +87,7 @@ if (!function_exists('random_int') || !function_exists('random_bytes'))
 // only allowed if "PHORUM_WRAPPER" is defined and if the alternative
 // configuration wasn't passed as a request parameter (which could
 // set $PHORUM_ALT_DBCONFIG if register_globals is enabled for PHP).
-if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"] || !defined("PHORUM_WRAPPER")) {
+if (empty( $GLOBALS["PHORUM_ALT_DBCONFIG"] ) || (isset($_REQUEST["PHORUM_ALT_DBCONFIG"]) && $GLOBALS["PHORUM_ALT_DBCONFIG"]==$_REQUEST["PHORUM_ALT_DBCONFIG"]) || !defined("PHORUM_WRAPPER")) {
 
     // Backup display_errors setting.
     $orig = ini_get("display_errors");

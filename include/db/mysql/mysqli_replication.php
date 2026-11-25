@@ -403,6 +403,8 @@ function phorum_db_fetch_row($res, $type)
 
 function phorum_db_get_random_connection(&$db_array)
 {
+    $conn = FALSE;
+
     // loop the servers until we get a connect
     // this could slow you down if you have a lot of downed servers
     while(!$conn && count($db_array)){
