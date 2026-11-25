@@ -19,134 +19,6 @@
 
 if ( !defined( "PHORUM_ADMIN" ) ) return;
 
-$error = '';
-
-if ( count( $_POST ) )
-{
-    // Keep track if we need to run display name updates.
-    $need_display_name_updates = FALSE;
-
-    // set the defaults
-    foreach( $_POST as $field => $value ) {
-        switch ( $field ) {
-            case "title":
-
-                if ( empty( $value ) ) {
-                    $_POST[$field] = "Phorum 5";
-                }
-
-                break;
-
-            case "http_path":
-
-                if ( empty( $value ) ) {
-                    $_POST[$field] = dirname( $_SERVER["HTTP_REFERER"] );
-                } elseif ( !preg_match( "/^(http|https):\/\/(([a-z0-9][a-z0-9_-]*)(\.[a-z0-9][a-z0-9_-]*)+)(:(\d+))?/i", $value ) && !preg_match( "/^(http|https):\/\/[a-z0-9][a-z0-9_-]*(:\d+)?/i", $value ) ) {
-                    $error .= 'The provided HTTP Path is not a valid URL. ';
-                }
-
-                break;
-
-            case "session_timeout":
-
-                $_POST[$field] = (int)$_POST[$field];
-
-                break;
-
-            case "short_session_timeout":
-
-                $_POST[$field] = (int)$_POST[$field];
-
-                // impose a 5 minute minimum on this field for sanity reasons
-                if($_POST[$field]<5) $_POST[$field];
-
-                break;
-
-            case "session_path":
-
-                if ( empty( $value ) ) {
-                    $_POST[$field] = "/";
-                } elseif ( $value[0] != "/" ) {
-                    $error .= 'Session Path must start with a /. ';
-                }
-
-                break;
-
-            case "session_domain":
-
-                if ( !empty( $value ) && !stristr( $_POST["http_path"], $value ) ) {
-                    $error .= 'Session Domain must be part of the domain in HTTP Path or empty. ';
-                }
-
-                break;
-
-            case "system_email_from_address":
-
-                if ( empty( $value ) ) {
-                    $error .= 'You must supply an email address for system emails to use as a from address. ';
-                }
-
-                break;
-
-            case "max_file_size":
-
-                settype( $_POST[$field], "int" );
-
-                break;
-
-            case "file_space_quota":
-
-                settype( $_POST[$field], "int" );
-
-                break;
-
-            case "file_types":
-
-                $_POST[$field] = strtolower( $value );
-
-                break;
-
-            case "private_key":
-
-                $private_key = trim($value);
-                if (strlen($private_key) < 30) {
-                    $error .= 'Use at least 30 characters for the secret private key. ';
-                }
-                $_POST[$field] = $private_key;
-                break;
-
-            case "display_name_source":
-
-                if ($_POST[$field] != $PHORUM["display_name_source"]) {
-                    $need_display_name_updates = TRUE;
-                }
-                break;
-        }
-    }
-
-    if ( empty( $error ) ) {
-        unset($_POST["module"] );
-        unset($_POST["phorum_admin_token"]);
-
-        if ( phorum_db_update_settings( $_POST ) ) {
-            $redir = phorum_admin_build_url(array('module=settings','message=success'), TRUE);
-            if ($need_display_name_updates) {
-                $redir = phorum_admin_build_url(array('module=update_display_names'), TRUE);
-            }
-            phorum_redirect_by_url($redir);
-            exit();
-        } else {
-            $error = "Database error while updating settings.";
-        }
-    }
-}
-
-if ( $error ) {
-    phorum_admin_error( $error );
-} elseif( isset($_GET['message']) && $_GET['message'] == 'success' ) {
-    $okmsg = "Settings updated";
-    phorum_admin_okmsg ( $okmsg);
-}
 // create the time zone drop down array
 for( $x = -23;$x <= 23;$x++ ) {
     $tz_range[$x] = $x;
@@ -447,6 +319,140 @@ $frm->addhelp($row, "Ignore Admin for moderator-emails", "If you select yes for 
  *     </hookcode>
  */
 $frm=phorum_hook("admin_general", $frm);
+
+$error = '';
+
+if ( count( $_POST ) )
+{
+    // Only the form's fields are saved: the settings also hold Phorum's internal data, such as
+    // "hooks", the functions Phorum calls, which a POST must not set. That is why the form is
+    // built before the POST is handled.
+    $_POST = array_intersect_key($_POST, array_flip($frm->field_names()));
+
+    // Keep track if we need to run display name updates.
+    $need_display_name_updates = FALSE;
+
+    // set the defaults
+    foreach( $_POST as $field => $value ) {
+        switch ( $field ) {
+            case "title":
+
+                if ( empty( $value ) ) {
+                    $_POST[$field] = "Phorum 5";
+                }
+
+                break;
+
+            case "http_path":
+
+                if ( empty( $value ) ) {
+                    $_POST[$field] = dirname( $_SERVER["HTTP_REFERER"] );
+                } elseif ( !preg_match( "/^(http|https):\/\/(([a-z0-9][a-z0-9_-]*)(\.[a-z0-9][a-z0-9_-]*)+)(:(\d+))?/i", $value ) && !preg_match( "/^(http|https):\/\/[a-z0-9][a-z0-9_-]*(:\d+)?/i", $value ) ) {
+                    $error .= 'The provided HTTP Path is not a valid URL. ';
+                }
+
+                break;
+
+            case "session_timeout":
+
+                $_POST[$field] = (int)$_POST[$field];
+
+                break;
+
+            case "short_session_timeout":
+
+                $_POST[$field] = (int)$_POST[$field];
+
+                // impose a 5 minute minimum on this field for sanity reasons
+                if($_POST[$field]<5) $_POST[$field];
+
+                break;
+
+            case "session_path":
+
+                if ( empty( $value ) ) {
+                    $_POST[$field] = "/";
+                } elseif ( $value[0] != "/" ) {
+                    $error .= 'Session Path must start with a /. ';
+                }
+
+                break;
+
+            case "session_domain":
+
+                if ( !empty( $value ) && !stristr( $_POST["http_path"], $value ) ) {
+                    $error .= 'Session Domain must be part of the domain in HTTP Path or empty. ';
+                }
+
+                break;
+
+            case "system_email_from_address":
+
+                if ( empty( $value ) ) {
+                    $error .= 'You must supply an email address for system emails to use as a from address. ';
+                }
+
+                break;
+
+            case "max_file_size":
+
+                settype( $_POST[$field], "int" );
+
+                break;
+
+            case "file_space_quota":
+
+                settype( $_POST[$field], "int" );
+
+                break;
+
+            case "file_types":
+
+                $_POST[$field] = strtolower( $value );
+
+                break;
+
+            case "private_key":
+
+                $private_key = trim($value);
+                if (strlen($private_key) < 30) {
+                    $error .= 'Use at least 30 characters for the secret private key. ';
+                }
+                $_POST[$field] = $private_key;
+                break;
+
+            case "display_name_source":
+
+                if ($_POST[$field] != $PHORUM["display_name_source"]) {
+                    $need_display_name_updates = TRUE;
+                }
+                break;
+        }
+    }
+
+    if ( empty( $error ) ) {
+        unset($_POST["module"] );
+        unset($_POST["phorum_admin_token"]);
+
+        if ( phorum_db_update_settings( $_POST ) ) {
+            $redir = phorum_admin_build_url(array('module=settings','message=success'), TRUE);
+            if ($need_display_name_updates) {
+                $redir = phorum_admin_build_url(array('module=update_display_names'), TRUE);
+            }
+            phorum_redirect_by_url($redir);
+            exit();
+        } else {
+            $error = "Database error while updating settings.";
+        }
+    }
+}
+
+if ( $error ) {
+    phorum_admin_error( $error );
+} elseif( isset($_GET['message']) && $_GET['message'] == 'success' ) {
+    $okmsg = "Settings updated";
+    phorum_admin_okmsg ( $okmsg);
+}
 
 $frm->show();
 

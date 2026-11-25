@@ -39,6 +39,7 @@ class PhorumInputForm {
     var $_submit;
     var $_help;
     var $_module;
+    var $_field_names = array();
 
     function __construct(...$args)
     {
@@ -131,8 +132,29 @@ class PhorumInputForm {
         }
     }
 
+    /**
+     * This method records the name of a field added to the form, for
+     * field_names(). It is called by the methods which create fields.
+     * A field named "mod_foo[bar]" arrives as $_POST["mod_foo"], so the
+     * name is kept up to the "[".
+     */
+    function _add_field_name( $name )
+    {
+        $this->_field_names[explode( "[", $name, 2 )[0]] = true;
+    }
+
+    /**
+     * @return $names - The names of the form's fields, as the keys they
+     *                  have in the request when the form is submitted.
+     */
+    function field_names()
+    {
+        return array_keys( $this->_field_names );
+    }
+
     function hidden( $name, $value )
     {
+        $this->_add_field_name( $name );
         $this->_hiddens[$name] = $value;
     }
 
@@ -373,6 +395,7 @@ class PhorumInputForm {
 
     function text_box( $name, $value, $size = 0, $maxlength = 0, $password = false, $extra = "" )
     {
+        $this->_add_field_name( $name );
         $type = ( $password ) ? "password" : "text";
         $data = "<input type=\"$type\" name=\"$name\"";
         if ( $size > 0 ) $data .= " size=\"$size\"";
@@ -385,6 +408,7 @@ class PhorumInputForm {
 
     function textarea( $name, $value, $cols = 30, $rows = 5, $extra = "" )
     {
+        $this->_add_field_name( $name );
         $value = htmlspecialchars( $value );
         $data = "<textarea name=\"$name\" cols=\"$cols\" rows=\"$rows\" $extra>$value</textarea>";
 
@@ -393,6 +417,7 @@ class PhorumInputForm {
 
     function select_tag( $name, $values, $selected = "", $extra = "" )
     {
+        $this->_add_field_name( $name );
         $data = "<select name=\"$name\" $extra>\n";
         foreach( $values as $value => $text ) {
             $value = htmlspecialchars( $value );
@@ -407,6 +432,7 @@ class PhorumInputForm {
 
     function select_tag_valaskey( $name, $values, $selected = "", $extra = "" )
     {
+        $this->_add_field_name( $name );
         $data = "<select name=\"$name\" $extra>\n";
         foreach( $values as $value => $text ) {
             $data .= "<option value=\"$text\"";
@@ -420,6 +446,7 @@ class PhorumInputForm {
 
     function radio_button( $name, $values, $selected = "", $separator = "&nbsp;&nbsp;", $extra = "" )
     {
+        $this->_add_field_name( $name );
         foreach( $values as $value => $text ) {
             $value = htmlspecialchars( $value );
             $text = htmlspecialchars( $text );
@@ -432,6 +459,7 @@ class PhorumInputForm {
 
     function checkbox( $name, $value, $caption, $checked = 0, $extra = '' )
     {
+        $this->_add_field_name( $name );
         global $checkidx;
         $checkidx++;
         $id = "admin_checkbox_$checkidx";
