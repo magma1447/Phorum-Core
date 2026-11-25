@@ -63,6 +63,14 @@ function phorum_cc_get_template_info()
 }
 
 if ( count( $_POST ) ) {
+    // Only the offsets the form offers, "Default" (-99) and the language's time zones, are
+    // saved. Any other value goes to the database as a float, and 1e999, which becomes INF,
+    // fails the user's save.
+    $offered = array_merge(array('-99'), array_map('strval', array_keys($PHORUM['DATA']['LANG']['TIME'])));
+    if (isset($_POST['tz_offset']) && !in_array($_POST['tz_offset'], $offered, true)) {
+        unset($_POST['tz_offset']);
+    }
+
     // dst is time + 1 hour
     if(isset($_POST['tz_offset']) && $_POST['tz_offset'] != -99) {
         if($_POST['tz_offset'] && isset($_POST['is_dst']) && $_POST['is_dst']) {
