@@ -106,8 +106,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
         // we can handle the error codes in PHP.
         mysqli_report(MYSQLI_REPORT_OFF);
 
+        // Sets the charset on both the server and mysqli_real_escape_string(), so that values
+        // are escaped for the charset the server reads them in. SET NAMES would only set it on
+        // the server.
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
-            mysqli_query( $conn,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+            mysqli_set_charset($conn, $PHORUM['DBCONFIG']['charset']);
         }
 
         // putting this here for testing mainly

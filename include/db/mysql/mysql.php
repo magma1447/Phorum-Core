@@ -105,8 +105,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             phorum_database_error('Failed to select the database.');
             exit;
         }
+        // Sets the charset on both the server and mysql_real_escape_string(), so that values
+        // are escaped for the charset the server reads them in. SET NAMES would only set it on
+        // the server.
         if(!empty($PHORUM['DBCONFIG']['charset'])) {
-            mysql_query( "SET NAMES '{$PHORUM['DBCONFIG']['charset']}'",$conn);
+            mysql_set_charset($PHORUM['DBCONFIG']['charset'], $conn);
         }
 
     }

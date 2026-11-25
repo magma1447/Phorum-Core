@@ -98,8 +98,11 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
 
             $conn_read = phorum_db_get_random_connection($PHORUM['DBCONFIG']['slaves']);
 
+            // Sets the charset on both the server and mysqli_real_escape_string(), so that
+            // values are escaped for the charset the server reads them in. SET NAMES would only
+            // set it on the server.
             if(!empty($PHORUM['DBCONFIG']['charset'])) {
-                mysqli_query( $conn_read,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+                mysqli_set_charset($conn_read, $PHORUM['DBCONFIG']['charset']);
             }
         }
 
@@ -130,7 +133,7 @@ function phorum_db_interact($return, $sql = NULL, $keyfield = NULL, $flags = 0)
             }
 
             if(!empty($PHORUM['DBCONFIG']['charset'])) {
-                mysqli_query( $conn_write,"SET NAMES '{$PHORUM['DBCONFIG']['charset']}'");
+                mysqli_set_charset($conn_write, $PHORUM['DBCONFIG']['charset']);
             }
         }
 
