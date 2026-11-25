@@ -82,7 +82,9 @@ if(is_array($message) && count($message)) {
                 "author"      => $message["author"],
                 "subject"     => $message["subject"],
                 "body"        => phorum_wordwrap($message["body"], 72),
-                "ip"          => $message["ip"],
+                // The mail goes to the forum's moderators, who see a poster's IP only with
+                // PHORUM_MOD_IP_VIEW.
+                "ip"          => PHORUM_MOD_IP_VIEW ? $message["ip"] : $PHORUM["DATA"]["LANG"]["Hidden"],
                 "raw_date"    => $message["datestamp"],
                 "date"        => phorum_date($PHORUM["short_date_time"], $message["datestamp"]),
                 "explanation" => phorum_wordwrap($_POST["explanation"], 72),
