@@ -798,6 +798,14 @@ function phorum_write_file($file, $data)
         "on your cache directory."
     );
     fclose($fp);
+
+    // The compiled template is included right after it is written, so opcache must not run its
+    // previous version from memory: a stage 1 file would then recompile the template and include
+    // itself again, endlessly. Forced, because a file rewritten within the same second keeps the
+    // mtime opcache compares.
+    if (function_exists('opcache_invalidate')) {
+        opcache_invalidate($file, true);
+    }
 }
 
 
