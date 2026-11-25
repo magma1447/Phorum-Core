@@ -60,7 +60,7 @@ require_once('./include/version_functions.php');
 $argv = $_SERVER['argv'];
 $cmd  = basename(array_shift($argv));
 
-function usage()
+function usage($cmd)
 {
     print "\n";
     print "Usage: $cmd [-h] [-a] [-f <upgrade file>]\n";
@@ -91,7 +91,7 @@ while (!empty($argv))
     switch ($opt)
     {
         case "-h":
-            usage();
+            usage($cmd);
             exit;
             break;
 
